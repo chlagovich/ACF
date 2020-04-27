@@ -4,28 +4,15 @@ namespace ActionFrameCore
 {
     public static class Player
     {
-
-        /// <summary> play action once.
-        /// </summary>
-        public static Entity Play(EntityCommandBuffer cmd, Entity owner, Entity action)
+        public static void RequestPlay(EntityCommandBuffer cmd, Entity reciever, Entity inputEvent, Entity action, int queueDuration, int priority)
         {
-            var a = cmd.Instantiate(action);
-            cmd.AddComponent(a, new ActionData() { owner = owner });
-            cmd.AddComponent(a, new PlayAction() { });
-            return a;
+            cmd.AddComponent(reciever, new RequestAction()
+            {
+                action = action,
+                priority = priority,
+                queueDuration = queueDuration,
+                inputEvent = inputEvent
+            });
         }
-
-        ///<summary> queue action once.
-        ///</summary>
-        public static void PlayQueued(EntityCommandBuffer cmd, Entity owner, Entity action)
-        {
-            cmd.AddComponent(owner, new QueuedAction() { queuedAction = action });
-        }
-
-        // get previous action
-        // get current action
-        // is playing
-        // pause action
-        // destroy action
     }
 }

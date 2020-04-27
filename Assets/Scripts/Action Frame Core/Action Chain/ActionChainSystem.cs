@@ -10,7 +10,7 @@ namespace SquareBattle
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
-        {          
+        {
             CommandBuffer = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
         }
 
@@ -24,86 +24,42 @@ namespace SquareBattle
             {
                 if (input.triggered)
                 {
-                    if (chain.index >= actions.Length || InputEventHasChanged(input.owner, e))
+                    if (chain.index >= actions.Length)
                         chain.index = 0;
 
-                    if (HasComponent<QueuedAction>(input.owner))
-                        return;
-
                     var playing = GetComponent<PlayingState>(input.owner);
-                    var ac = playing.currentAction;
-                    if (ac == Entity.Null)
+                    if (playing.currAction == Entity.Null)
                     {
-                        var prevAc = playing.prevAction;
-                        if (prevAc != Entity.Null)
+                        if (playing.prevAction != Entity.Null)
                         {
-                            var duration = frameCount - GetLastFrame(input.owner);
-                            var frameData = GetComponent<FrameData>(prevAc);
-                            if (duration > (frameData.totalFrames + chain.afterFrame))
+                            var prevActionData = GetComponent<ActionData>(playing.prevAction);
+                            var prevFrameData = GetComponent<FrameData>(playing.prevAction);
+                            var duration = frameCount - prevActionData.spawnedFrameCount;
+
+                            if (duration > (prevFrameData.totalFrames + chain.afterFrame))
                                 chain.index = 0;
+
+                            if (prevActionData.inputEvent != e)
+                                chain.index = 0;
+                            else
+                                chain.index++;
                         }
-                        
-                        Player.Play(cmd, input.owner, actions[chain.index].action);
-                        chain.index++;
-                        SetLastFrame(cmd, input.owner, frameCount, e);
                     }
                     else
                     {
-                        var duration = frameCount - GetLastFrame(input.owner);
-                        var frameData = GetComponent<FrameData>(ac);
-                        if (duration > (frameData.totalFrames - chain.beforeFrame))
+                        var currActionData = GetComponent<ActionData>(playing.currAction);
+                        if (currActionData.inputEvent != e)
                         {
-                            // play queued
-                            Player.PlayQueued(cmd, input.owner, actions[chain.index].action);
-                            chain.index++;
-                            SetLastFrame(cmd, input.owner, frameCount, e);
+                            chain.index = 0;
                         }
                     }
-                }
 
-            }).WithoutBurst().Run();
+                    Player.RequestPlay(cmd, input.owner, e, actions[chain.index].action, frameCount + chain.beforeFrame, input.priority);
+
+                }
+            }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
-        }
-
-        private void SetLastFrame(EntityCommandBuffer commandBuffer, Entity owner, int frame, Entity inputEvent)
-        {
-            if (HasComponent<LastInputEvent>(owner))
-            {
-                commandBuffer.SetComponent(owner, new LastInputEvent()
-                {
-                    lastFrameCount = frame,
-                    lastInputEvent = inputEvent
-                });
-            }
-            else
-            {
-                commandBuffer.AddComponent(owner, new LastInputEvent()
-                {
-                    lastFrameCount = frame,
-                    lastInputEvent = inputEvent
-                });
-            }
-        }
-
-        private int GetLastFrame(Entity owner)
-        {
-            int lastF = 0;
-            if (HasComponent<LastInputEvent>(owner))
-            {
-                var lfi = GetComponent<LastInputEvent>(owner);
-                lastF = lfi.lastFrameCount;
-            }
-            return lastF;
-        }
-        private bool InputEventHasChanged(Entity owner, Entity inputEvent)
-        {
-            if (HasComponent<LastInputEvent>(owner))
-            {
-                var lfi = GetComponent<LastInputEvent>(owner);
-                return lfi.lastInputEvent != inputEvent;
-            }
-            return false;
         }
     }
 }

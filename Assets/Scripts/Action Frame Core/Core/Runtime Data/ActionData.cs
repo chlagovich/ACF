@@ -5,8 +5,8 @@ using Unity.Mathematics;
 
 public struct ActionData : IComponentData
 {
-    public byte id;
-    public byte layer;
-    public Entity inputHandler;
+    public int priority;
     public Entity owner;
+    public Entity inputEvent;
+    public int spawnedFrameCount; 
 }

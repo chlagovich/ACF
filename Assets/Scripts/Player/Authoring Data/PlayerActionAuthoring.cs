@@ -24,7 +24,7 @@ namespace SquareBattle
         {
             dstManager.AddComponentData(entity, new PlayingState()
             {
-                currentAction = Entity.Null,
+                currAction = Entity.Null,
                 prevAction = Entity.Null
             });
             for (int i = 0; i < playerActions.Length; i++)

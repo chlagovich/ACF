@@ -25,9 +25,9 @@ namespace SquareBattle
                 if (HasComponent<PlayingState>(action.owner))
                 {
                     var state = GetComponent<PlayingState>(action.owner);
-                    if (state.currentAction != e)
+                    if (state.currAction != e)
                     {
-                        state.currentAction = e;
+                        state.currAction = e;
                         cmd.SetComponent(action.owner, state);
                     }
                 }
@@ -38,10 +38,10 @@ namespace SquareBattle
                 if (HasComponent<PlayingState>(action.owner))
                 {
                     var state = GetComponent<PlayingState>(action.owner);
-                    if (state.currentAction == e)
+                    if (state.currAction == e)
                     {
-                        state.prevAction = state.currentAction;
-                        state.currentAction = Entity.Null;
+                        state.prevAction = state.currAction;
+                        state.currAction = Entity.Null;
                         cmd.SetComponent(action.owner, state);
                     }
                 }

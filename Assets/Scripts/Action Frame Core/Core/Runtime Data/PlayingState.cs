@@ -3,5 +3,5 @@
 public struct PlayingState : IComponentData 
 {
     public Entity prevAction;
-    public Entity currentAction;
+    public Entity currAction;
 }
