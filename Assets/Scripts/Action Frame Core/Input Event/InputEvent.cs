@@ -7,6 +7,7 @@ namespace SquareBattle
 {
     public struct InputEvent : IComponentData
     {
+        public Entity owner;
         public int priority;
         public Guid id;
         public float value;

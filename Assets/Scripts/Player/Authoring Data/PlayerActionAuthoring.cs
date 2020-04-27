@@ -40,13 +40,9 @@ namespace SquareBattle
 
                 dstManager.AddComponentData(e, new InputEvent()
                 {
+                    owner = entity,
                     priority = playerActions[i].priority,
                     id = playerActions[i].input.action.id
-                });
-
-                dstManager.AddComponentData(e, new InputEventOwner()
-                {
-                    owner = entity
                 });
 
                 DynamicBuffer<ActionBufferData> acbuffer = dstManager.AddBuffer<ActionBufferData>(e);

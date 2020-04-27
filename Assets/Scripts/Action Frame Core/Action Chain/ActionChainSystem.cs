@@ -1,7 +1,5 @@
 ﻿using Unity.Entities;
-using Unity.Mathematics;
 using ActionFrameCore;
-using Unity.Collections;
 
 namespace SquareBattle
 {
@@ -12,8 +10,7 @@ namespace SquareBattle
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
-        {
-            // Cache the BeginInitializationEntityCommandBufferSystem in a field, so we don't have to create it every frame
+        {          
             CommandBuffer = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
         }
 
@@ -23,56 +20,43 @@ namespace SquareBattle
 
             var frameCount = UnityEngine.Time.frameCount;
 
-            Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input, in InputEventOwner owner) =>
+            Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input) =>
             {
                 if (input.triggered)
                 {
-                    if (chain.index >= actions.Length || InputEventHasChanged(owner.owner, e))
+                    if (chain.index >= actions.Length || InputEventHasChanged(input.owner, e))
                         chain.index = 0;
 
-                    if (HasComponent<QueuedAction>(owner.owner))
+                    if (HasComponent<QueuedAction>(input.owner))
                         return;
 
-                    var playing = GetComponent<PlayingState>(owner.owner);
+                    var playing = GetComponent<PlayingState>(input.owner);
                     var ac = playing.currentAction;
                     if (ac == Entity.Null)
                     {
                         var prevAc = playing.prevAction;
-                        if (prevAc == Entity.Null)
+                        if (prevAc != Entity.Null)
                         {
-                            Player.Play(cmd, owner.owner, actions[chain.index].action);
-                            chain.index++;
-                            SetLastFrame(cmd, owner.owner, frameCount, e);
-                        }
-                        else
-                        {
-                            var duration = frameCount - GetLastFrame(owner.owner);
+                            var duration = frameCount - GetLastFrame(input.owner);
                             var frameData = GetComponent<FrameData>(prevAc);
-                            if (duration < (frameData.totalFrames + chain.afterFrame))
-                            {
-                                Player.Play(cmd, owner.owner, actions[chain.index].action);
-                                chain.index++;
-                                SetLastFrame(cmd, owner.owner, frameCount, e);
-                            }
-                            else
-                            {
+                            if (duration > (frameData.totalFrames + chain.afterFrame))
                                 chain.index = 0;
-                                Player.Play(cmd, owner.owner, actions[chain.index].action);
-                                chain.index++;
-                                SetLastFrame(cmd, owner.owner, frameCount, e);
-                            }
                         }
+                        
+                        Player.Play(cmd, input.owner, actions[chain.index].action);
+                        chain.index++;
+                        SetLastFrame(cmd, input.owner, frameCount, e);
                     }
                     else
                     {
-                        var duration = frameCount - GetLastFrame(owner.owner);
+                        var duration = frameCount - GetLastFrame(input.owner);
                         var frameData = GetComponent<FrameData>(ac);
                         if (duration > (frameData.totalFrames - chain.beforeFrame))
                         {
                             // play queued
-                            Player.PlayQueued(cmd, owner.owner, actions[chain.index].action);
+                            Player.PlayQueued(cmd, input.owner, actions[chain.index].action);
                             chain.index++;
-                            SetLastFrame(cmd, owner.owner, frameCount, e);
+                            SetLastFrame(cmd, input.owner, frameCount, e);
                         }
                     }
                 }

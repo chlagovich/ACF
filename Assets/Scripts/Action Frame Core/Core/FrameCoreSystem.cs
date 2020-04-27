@@ -40,7 +40,7 @@ namespace SquareBattle
             int increment = currFrames - prevFrame;
             prevFrame++;
 
-            Entities.WithAll<PlayFrame>().ForEach((ref FrameData frame) =>
+            Entities.WithAll<PlayAction>().ForEach((ref FrameData frame) =>
             {
                 frame.currentFrame += increment;
 
@@ -54,11 +54,11 @@ namespace SquareBattle
 
             }).ScheduleParallel();
 
-            Entities.WithAll<PlayFrame>().ForEach((Entity e, int entityInQueryIndex, in FrameData frame) =>
+            Entities.WithAll<PlayAction>().ForEach((Entity e, int entityInQueryIndex, in FrameData frame) =>
             {
                 if (!frame.loop && frame.currentFrame >= frame.totalFrames)
                 {
-                    cmd.RemoveComponent<PlayFrame>(entityInQueryIndex, e);
+                    cmd.RemoveComponent<PlayAction>(entityInQueryIndex, e);
                 }
 
             }).ScheduleParallel();

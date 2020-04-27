@@ -20,7 +20,7 @@ namespace SquareBattle
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
-            Entities.WithAll<PlayFrame>().ForEach((Entity e, in ActionData action) =>
+            Entities.WithAll<PlayAction>().ForEach((Entity e, in ActionData action) =>
             {
                 if (HasComponent<PlayingState>(action.owner))
                 {
@@ -33,7 +33,7 @@ namespace SquareBattle
                 }
             }).Schedule();
 
-            Entities.WithNone<PlayFrame>().ForEach((Entity e, in ActionData action) =>
+            Entities.WithNone<PlayAction>().ForEach((Entity e, in ActionData action) =>
             {
                 if (HasComponent<PlayingState>(action.owner))
                 {

@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 
-public struct PlayFrame : IComponentData
+public struct PlayAction : IComponentData
 { 
     
 }

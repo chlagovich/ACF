@@ -11,7 +11,7 @@ namespace ActionFrameCore
         {
             var a = cmd.Instantiate(action);
             cmd.AddComponent(a, new ActionData() { owner = owner });
-            cmd.AddComponent(a, new PlayFrame() { });
+            cmd.AddComponent(a, new PlayAction() { });
             return a;
         }
 

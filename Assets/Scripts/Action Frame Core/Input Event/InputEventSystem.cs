@@ -13,26 +13,26 @@ namespace SquareBattle
             NativeList<Entity> owners = new NativeList<Entity>(Allocator.TempJob);
             NativeList<int> priorities = new NativeList<int>(Allocator.TempJob);
             NativeList<Entity> inputs = new NativeList<Entity>(Allocator.TempJob);
-            Entities.ForEach((Entity entity, ref InputEvent inputData, in InputEventOwner owner) =>
+            Entities.ForEach((Entity entity, ref InputEvent input) =>
             {
-                inputData.triggered = false;
-                inputData.value = 0;
-                var p = EntityManager.GetComponentObject<PlayerInput>(owner.owner);
-                var action = p.actions.FindAction(inputData.id);
+                input.triggered = false;
+                input.value = 0;
+                var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
+                var action = p.actions.FindAction(input.id);
                 if (action.triggered)
                 {
-                    if (!owners.Contains(owner.owner))
+                    if (!owners.Contains(input.owner))
                     {
-                        owners.Add(owner.owner);
-                        priorities.Add(inputData.priority);
+                        owners.Add(input.owner);
+                        priorities.Add(input.priority);
                         inputs.Add(entity);
                     }
                     else
                     {
-                        int index = owners.IndexOf(owner.owner);
-                        if (priorities[index] < inputData.priority)
+                        int index = owners.IndexOf(input.owner);
+                        if (priorities[index] < input.priority)
                         {
-                            priorities[index] = inputData.priority;
+                            priorities[index] = input.priority;
                             inputs[index] = entity;
                         }
                     }
@@ -43,8 +43,7 @@ namespace SquareBattle
             for (int i = 0; i < inputs.Length; i++)
             {
                 var input = GetComponent<InputEvent>(inputs[i]);
-                var owner = GetComponent<InputEventOwner>(inputs[i]);
-                var p = EntityManager.GetComponentObject<PlayerInput>(owner.owner);
+                var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
                 input.triggered = action.triggered;
                 input.value = action.ReadValue<float>();
