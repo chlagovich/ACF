@@ -19,7 +19,7 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
             var frameCount = UnityEngine.Time.frameCount;
 
-            Entities.ForEach((Entity e, in RequestAction request, in PlayingState state) =>
+            Entities.ForEach((Entity e, ref RequestAction request, in PlayingState state) =>
             {
                 if (state.currAction == Entity.Null)
                 {
@@ -33,6 +33,9 @@ namespace SquareBattle
                         spawnedFrameCount = frameCount
                     });
                     cmd.AddComponent(a, new PlayAction() { });
+                    var chain = GetComponent<ActionChain>(request.inputEvent);
+                    chain.index++;
+                    cmd.SetComponent(request.inputEvent, chain);
                 }
                 else
                 {
@@ -50,11 +53,16 @@ namespace SquareBattle
                             spawnedFrameCount = frameCount
                         });
                         cmd.AddComponent(a, new PlayAction() { });
+                        var chain = GetComponent<ActionChain>(request.inputEvent);
+                        chain.index++;
+                        cmd.SetComponent(request.inputEvent, chain);
                     }
                 }
 
-                if (frameCount > request.queueDuration)
+                if (request.queueDuration <= 0)
                     cmd.RemoveComponent<RequestAction>(e);
+
+                request.queueDuration--;
 
             }).Run();
 

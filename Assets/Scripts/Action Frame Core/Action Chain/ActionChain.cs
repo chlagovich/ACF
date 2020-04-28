@@ -8,5 +8,6 @@ namespace SquareBattle
         public int beforeFrame;
         public int afterFrame;
         public int index;
+        public int actionLayer;
     }
 }

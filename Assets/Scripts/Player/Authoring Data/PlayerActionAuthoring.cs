@@ -6,11 +6,18 @@ using System;
 
 namespace SquareBattle
 {
+    public enum ActionLayer
+    {
+        Layer1 = 0, Layer2 = 1, Layer3 = 2, Layer4 = 3
+    }
+
     [Serializable]
     public struct PlayerAction
     {
         public InputActionReference input;
-        public int priority;
+        public int inputPriority;
+        public ActionLayer actionLayer;
+
         public GameObject[] actions;
     }
 
@@ -35,13 +42,14 @@ namespace SquareBattle
                 {
                     afterFrame = resetChainAfter,
                     beforeFrame = queueActionBefore,
-                    index = 0
+                    index = 0,
+                    actionLayer = (int)playerActions[i].actionLayer
                 });
 
                 dstManager.AddComponentData(e, new InputEvent()
                 {
                     owner = entity,
-                    priority = playerActions[i].priority,
+                    priority = playerActions[i].inputPriority,
                     id = playerActions[i].input.action.id
                 });
 

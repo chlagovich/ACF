@@ -36,26 +36,24 @@ namespace SquareBattle
                             var prevFrameData = GetComponent<FrameData>(playing.prevAction);
                             var duration = frameCount - prevActionData.spawnedFrameCount;
 
-                            if (duration > (prevFrameData.totalFrames + chain.afterFrame))
-                                chain.index = 0;
-
                             if (prevActionData.inputEvent != e)
                                 chain.index = 0;
-                            else
-                                chain.index++;
+
+                            if (duration > (prevFrameData.totalFrames + chain.afterFrame))
+                                chain.index = 0;
                         }
                     }
                     else
                     {
-                        var currActionData = GetComponent<ActionData>(playing.currAction);
+                       var currActionData = GetComponent<ActionData>(playing.currAction);
                         if (currActionData.inputEvent != e)
-                        {
                             chain.index = 0;
-                        }
                     }
 
-                    Player.RequestPlay(cmd, input.owner, e, actions[chain.index].action, frameCount + chain.beforeFrame, input.priority);
-
+                    if (HasComponent<RequestAction>(input.owner))
+                        Player.RequestPlaySet(cmd, input.owner, e, actions[chain.index].action, chain.beforeFrame, chain.actionLayer);
+                    else
+                        Player.RequestPlayAdd(cmd, input.owner, e, actions[chain.index].action, chain.beforeFrame, chain.actionLayer);
                 }
             }).Run();
 
