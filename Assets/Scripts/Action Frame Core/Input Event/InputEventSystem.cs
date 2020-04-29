@@ -2,6 +2,7 @@
 using UnityEngine.InputSystem;
 using UnityEngine;
 using Unity.Collections;
+using Unity.Mathematics;
 
 namespace SquareBattle
 {
@@ -17,9 +18,32 @@ namespace SquareBattle
             {
                 input.triggered = false;
                 input.value = 0;
+                input.axis = float2.zero;
+
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
-                if (action.triggered)
+                if (action.type == InputActionType.Button)
+                {
+                    if (action.triggered)
+                    {
+                        if (!owners.Contains(input.owner))
+                        {
+                            owners.Add(input.owner);
+                            priorities.Add(input.priority);
+                            inputs.Add(entity);
+                        }
+                        else
+                        {
+                            int index = owners.IndexOf(input.owner);
+                            if (priorities[index] < input.priority)
+                            {
+                                priorities[index] = input.priority;
+                                inputs[index] = entity;
+                            }
+                        }
+                    }
+                }
+                else if (action.type == InputActionType.Value)
                 {
                     if (!owners.Contains(input.owner))
                     {
@@ -46,7 +70,15 @@ namespace SquareBattle
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
                 input.triggered = action.triggered;
-                input.value = action.ReadValue<float>();
+                object value = action.ReadValueAsObject();
+                if (value != null)
+                {
+                    var t = value.GetType();
+                    if (t.Equals(typeof(Vector2)))
+                        input.axis = (Vector2)value;
+                    else if (t.Equals(typeof(float)))
+                        input.value = (float)value;
+                }
                 SetComponent(inputs[i], input);
             }
 

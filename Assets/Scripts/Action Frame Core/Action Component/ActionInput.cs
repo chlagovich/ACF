@@ -5,11 +5,10 @@ using System;
 
 namespace SquareBattle
 {
-    public struct InputEvent : IComponentData
+    [GenerateAuthoringComponent]
+    [Serializable]
+    public struct ActionInput : IComponentData
     {
-        public Entity owner;
-        public int priority;
-        public Guid id;
         public float value;
         public bool triggered;
         public float2 axis;

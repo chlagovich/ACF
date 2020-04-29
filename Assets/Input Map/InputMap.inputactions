@@ -22,9 +22,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "Run",
-                    "type": "Button",
+                    "name": "Move",
+                    "type": "Value",
                     "id": "cee7ddcf-b4bc-45a5-9272-8c25505a783a",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Smash Hit",
+                    "type": "Value",
+                    "id": "1bb8ca48-6c0c-4935-b5c9-23e95f73e536",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -33,45 +41,12 @@
             "bindings": [
                 {
                     "name": "",
-                    "id": "451ab758-bf70-4c9f-b495-1db1ad085950",
-                    "path": "<HID::DragonRise Inc.   Generic   USB  Joystick  >/button2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Medium Hit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "ced45df1-cb4d-445f-84ad-58bbe4bec580",
-                    "path": "<Keyboard>/w",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Medium Hit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "30289d8b-41b3-4006-b463-7840e7e1297e",
-                    "path": "<HID::USB Gamepad >/button2",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Medium Hit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f2e06bf0-4f63-435a-92ce-a5d355156b41",
-                    "path": "<HID::DragonRise Inc.   Generic   USB  Joystick  >/button3",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Low Hit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -87,24 +62,68 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "d708d6a4-7323-47b8-95df-d3e135af502f",
-                    "path": "<HID::USB Gamepad >/button3",
+                    "name": "WSAD",
+                    "id": "70e28c2c-496d-4698-a36f-c81fb37ae658",
+                    "path": "2DVector",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Low Hit",
-                    "isComposite": false,
+                    "action": "Move",
+                    "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
-                    "id": "b50ed8da-8e17-4b6d-881d-522f7a88e802",
-                    "path": "<Keyboard>/space",
+                    "name": "Up",
+                    "id": "188ac318-b0da-4969-b71d-ae93da0a00dd",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Run",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Down",
+                    "id": "a4f5fe68-4398-40c7-b49e-949e5421a647",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Left",
+                    "id": "190bb998-0dea-4a1d-8676-bb33bd327a58",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Right",
+                    "id": "858449ae-a053-46bc-92f7-e44eea42c316",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "556f1a06-2d88-4674-95f9-9613102f1de4",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Smash Hit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

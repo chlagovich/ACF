@@ -6,26 +6,11 @@ using System;
 
 namespace SquareBattle
 {
-    public enum ActionLayer
-    {
-        Layer1 = 0, Layer2 = 1, Layer3 = 2, Layer4 = 3
-    }
-
-    [Serializable]
-    public struct PlayerAction
-    {
-        public InputActionReference input;
-        public int inputPriority;
-        public ActionLayer actionLayer;
-
-        public GameObject[] actions;
-    }
-
-    public class PlayerActionAuthoring : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
+    public class PlayerActionChainAuthoring : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
     {
         public int resetChainAfter;
         public int queueActionBefore;
-        public PlayerAction[] playerActions;
+        public PlayerActionChain[] playerActions;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
@@ -37,7 +22,9 @@ namespace SquareBattle
             for (int i = 0; i < playerActions.Length; i++)
             {
                 var e = dstManager.CreateEntity();
+                #if UNITY_EDITOR
                 dstManager.SetName(e, dstManager.GetName(entity) + " Action " + (i + 1));
+                #endif
                 dstManager.AddComponentData(e, new ActionChain()
                 {
                     afterFrame = resetChainAfter,

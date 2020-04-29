@@ -9,10 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1376571623330111538}
-  - component: {fileID: -1599457585806869432}
-  - component: {fileID: -8985149787391388563}
+  - component: {fileID: 6075288198862773135}
+  - component: {fileID: -7724269050617037845}
+  - component: {fileID: 5798586748971221248}
   m_Layer: 0
-  m_Name: Hit 2
+  m_Name: Move
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-1599457585806869432
+--- !u!114 &6075288198862773135
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,11 +45,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11c0c5d91f3a32349a1c574cd80e5bcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loop: 0
-  totalFrames: 12
+  loop: 1
+  totalFrames: 28
   currentFrame: 0
   normlizedTime: 0
---- !u!114 &-8985149787391388563
+--- !u!114 &-7724269050617037845
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -60,4 +61,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fe663dcea6108b4ea68da2fe428a397, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animationName: attack 2
+  animationName: run
+--- !u!114 &5798586748971221248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792482403169214809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12cf1af163e50a345be87228b6bb740a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  value: 0
+  triggered: 0
+  axis:
+    x: 0
+    y: 0

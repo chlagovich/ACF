@@ -33,9 +33,12 @@ namespace SquareBattle
                         spawnedFrameCount = frameCount
                     });
                     cmd.AddComponent(a, new PlayAction() { });
-                    var chain = GetComponent<ActionChain>(request.inputEvent);
-                    chain.index++;
-                    cmd.SetComponent(request.inputEvent, chain);
+                    if (HasComponent<ActionChain>(request.inputEvent))
+                    {
+                        var chain = GetComponent<ActionChain>(request.inputEvent);
+                        chain.index++;
+                        cmd.SetComponent(request.inputEvent, chain);
+                    }
                 }
                 else
                 {
@@ -53,9 +56,12 @@ namespace SquareBattle
                             spawnedFrameCount = frameCount
                         });
                         cmd.AddComponent(a, new PlayAction() { });
-                        var chain = GetComponent<ActionChain>(request.inputEvent);
-                        chain.index++;
-                        cmd.SetComponent(request.inputEvent, chain);
+                        if (HasComponent<ActionChain>(request.inputEvent))
+                        {
+                            var chain = GetComponent<ActionChain>(request.inputEvent);
+                            chain.index++;
+                            cmd.SetComponent(request.inputEvent, chain);
+                        }
                     }
                 }
 
