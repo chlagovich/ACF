@@ -518,7 +518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   channel: 2
   resetChainAfter: 0
-  inputTriggerDuration: 10
+  inputTriggerDuration: 5
   playerActions:
   - continious: 0
     input: {fileID: -3443275142228256790, guid: 377c0e0cd531304468ec3cd278c7eac7,

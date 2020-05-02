@@ -1,5 +1,4 @@
 ﻿using Unity.Entities;
-using ActionFrameCore;
 using Unity.Mathematics;
 
 namespace SquareBattle
