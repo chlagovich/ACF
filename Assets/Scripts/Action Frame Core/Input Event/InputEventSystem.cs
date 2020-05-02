@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 
+//TODO optimize input filtering
 namespace SquareBattle
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
@@ -11,65 +12,105 @@ namespace SquareBattle
     {
         protected override void OnUpdate()
         {
-            NativeList<Entity> owners = new NativeList<Entity>(Allocator.TempJob);
-            NativeList<int> priorities = new NativeList<int>(Allocator.TempJob);
-            NativeList<Entity> inputs = new NativeList<Entity>(Allocator.TempJob);
-            Entities.ForEach((Entity entity, ref InputEvent input) =>
+
+            var finalgroup = new NativeList<Entity>(Allocator.TempJob);
+            NativeList<Entity> activeInputs = new NativeList<Entity>(Allocator.TempJob);
+
+            var frameCount = UnityEngine.Time.frameCount;
+            Entities.ForEach((Entity entity, ref InputEvent input, in ChannelData channel) =>
             {
-                input.triggered = false;
                 input.value = 0;
                 input.axis = float2.zero;
+                if (input.inputResetDuration > 0)
+                {
+                    if (input.lastInputFrame <= frameCount)
+                        input.triggered = false;
+                }
+                else
+                    input.triggered = false;
 
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
-                if (action.type == InputActionType.Button)
-                {
-                    if (action.triggered)
-                    {
-                        if (!owners.Contains(input.owner))
-                        {
-                            owners.Add(input.owner);
-                            priorities.Add(input.priority);
-                            inputs.Add(entity);
-                        }
-                        else
-                        {
-                            int index = owners.IndexOf(input.owner);
-                            if (priorities[index] < input.priority)
-                            {
-                                priorities[index] = input.priority;
-                                inputs[index] = entity;
-                            }
-                        }
-                    }
-                }
-                else if (action.type == InputActionType.Value)
-                {
-                    if (!owners.Contains(input.owner))
-                    {
-                        owners.Add(input.owner);
-                        priorities.Add(input.priority);
-                        inputs.Add(entity);
-                    }
-                    else
-                    {
-                        int index = owners.IndexOf(input.owner);
-                        if (priorities[index] < input.priority)
-                        {
-                            priorities[index] = input.priority;
-                            inputs[index] = entity;
-                        }
-                    }
-                }
+                if (action.triggered)
+                    input.lastInputFrame = frameCount + input.inputResetDuration;
+
+                object value = action.ReadValueAsObject();
+                if (value != null)
+                    activeInputs.Add(entity);
+
             }).WithoutBurst().Run();
 
-
-            for (int i = 0; i < inputs.Length; i++)
+            Job.WithCode(() =>
             {
-                var input = GetComponent<InputEvent>(inputs[i]);
+                var ownergroup = new NativeList<Entity>(Allocator.TempJob);
+                for (int i = 0; i < activeInputs.Length; i++)
+                {
+                    var input = GetComponent<InputEvent>(activeInputs[i]);
+                    if (!ownergroup.Contains(input.owner))
+                        ownergroup.Add(input.owner);
+                }
+
+
+                for (int i = 0; i < ownergroup.Length; i++)
+                {
+                    var group = new NativeList<Entity>(Allocator.TempJob);
+
+                    for (int j = 0; j < activeInputs.Length; j++)
+                    {
+                        var input = GetComponent<InputEvent>(activeInputs[j]);
+                        if (ownergroup[i] == input.owner)
+                            group.Add(activeInputs[j]);
+
+                    }
+
+                    var channels = new NativeList<int>(Allocator.TempJob);
+                    for (int k = 0; k < group.Length; k++)
+                    {
+                        var channel = GetComponent<ChannelData>(group[k]);
+                        if (!channels.Contains((int)channel.channel))
+                            channels.Add((int)channel.channel);
+                    }
+
+                    for (int l = 0; l < channels.Length; l++)
+                    {
+                        var chgroup = new NativeList<Entity>(Allocator.TempJob);
+                        for (int s = 0; s < group.Length; s++)
+                        {
+                            var channel = GetComponent<ChannelData>(group[s]);
+                            if (channels[l] == (int)channel.channel)
+                                chgroup.Add(group[s]);
+                        }
+
+                        int index = 0;
+                        for (int t = 0; t < chgroup.Length; t++)
+                        {
+                            var tt = GetComponent<InputEvent>(chgroup[t]);
+                            var tti = GetComponent<InputEvent>(chgroup[index]);
+                            if (tt.priority > tti.priority)
+                                index = t;
+                        }
+                        finalgroup.Add(chgroup[index]);
+                        chgroup.Dispose();
+                    }
+
+                    channels.Dispose();
+                    group.Dispose();
+                }
+
+                ownergroup.Dispose();
+
+            }).Run();
+
+            activeInputs.Dispose();
+
+            for (int i = 0; i < finalgroup.Length; i++)
+            {
+                var input = GetComponent<InputEvent>(finalgroup[i]);
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
-                input.triggered = action.triggered;
+                if (action.triggered)
+                    input.triggered = action.triggered;
+
                 object value = action.ReadValueAsObject();
                 if (value != null)
                 {
@@ -79,12 +120,10 @@ namespace SquareBattle
                     else if (t.Equals(typeof(float)))
                         input.value = (float)value;
                 }
-                SetComponent(inputs[i], input);
+                SetComponent(finalgroup[i], input);
             }
 
-            owners.Dispose();
-            priorities.Dispose();
-            inputs.Dispose();
+            finalgroup.Dispose();
         }
     }
 }

@@ -2,7 +2,7 @@
 using ActionFrameCore;
 
 namespace SquareBattle
-{
+{/*
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     public class ActionPrioritySystem : SystemBase
     {
@@ -19,25 +19,25 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
             var frameCount = UnityEngine.Time.frameCount;
 
-            Entities.ForEach((Entity e, ref RequestAction request, in PlayingState state) =>
+            Entities.ForEach((Entity e, ref ChannelRequest request, in PlayingState state) =>
             {
                 if (state.currAction == Entity.Null)
                 {
-                    cmd.RemoveComponent<RequestAction>(e);
+                    cmd.RemoveComponent<ChannelRequest>(e);
                     var a = cmd.Instantiate(request.action);
                     cmd.AddComponent(a, new ActionData()
                     {
                         owner = e,
                         priority = request.priority,
-                        inputEvent = request.inputEvent,
+                        inputEvent = request.source,
                         spawnedFrameCount = frameCount
                     });
                     cmd.AddComponent(a, new PlayAction() { });
-                    if (HasComponent<ActionChain>(request.inputEvent))
+                    if (HasComponent<ActionChain>(request.source))
                     {
-                        var chain = GetComponent<ActionChain>(request.inputEvent);
+                        var chain = GetComponent<ActionChain>(request.source);
                         chain.index++;
-                        cmd.SetComponent(request.inputEvent, chain);
+                        cmd.SetComponent(request.source, chain);
                     }
                 }
                 else
@@ -45,28 +45,28 @@ namespace SquareBattle
                     var actionData = GetComponent<ActionData>(state.currAction);
                     if (request.priority > actionData.priority)
                     {
-                        cmd.RemoveComponent<RequestAction>(e);
+                        cmd.RemoveComponent<ChannelRequest>(e);
                         cmd.RemoveComponent<PlayAction>(state.currAction);
                         var a = cmd.Instantiate(request.action);
                         cmd.AddComponent(a, new ActionData()
                         {
                             owner = e,
                             priority = request.priority,
-                            inputEvent = request.inputEvent,
+                            inputEvent = request.source,
                             spawnedFrameCount = frameCount
                         });
                         cmd.AddComponent(a, new PlayAction() { });
-                        if (HasComponent<ActionChain>(request.inputEvent))
+                        if (HasComponent<ActionChain>(request.source))
                         {
-                            var chain = GetComponent<ActionChain>(request.inputEvent);
+                            var chain = GetComponent<ActionChain>(request.source);
                             chain.index++;
-                            cmd.SetComponent(request.inputEvent, chain);
+                            cmd.SetComponent(request.source, chain);
                         }
                     }
                 }
 
                 if (request.queueDuration <= 0)
-                    cmd.RemoveComponent<RequestAction>(e);
+                    cmd.RemoveComponent<ChannelRequest>(e);
 
                 request.queueDuration--;
 
@@ -74,5 +74,5 @@ namespace SquareBattle
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }
-    }
+    }*/
 }

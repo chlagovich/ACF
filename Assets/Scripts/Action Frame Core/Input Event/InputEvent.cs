@@ -13,5 +13,7 @@ namespace SquareBattle
         public float value;
         public bool triggered;
         public float2 axis;
+        public int inputResetDuration;
+        public int lastInputFrame;
     }
 }

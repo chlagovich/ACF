@@ -3,9 +3,8 @@ using Unity.Entities;
 
 namespace SquareBattle
 {
-    public struct ActionLoop : IComponentData
+    public struct ActionDirect : IComponentData
     {
         public Entity action;
-        public int actionLayer;
     }
 }

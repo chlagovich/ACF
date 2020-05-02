@@ -6,7 +6,7 @@ namespace SquareBattle
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     [UpdateAfter(typeof(InputEventSystem))]
-    public class ActionLoopSystem : SystemBase
+    public class ActionDirectSystem : SystemBase
     {
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
@@ -18,15 +18,19 @@ namespace SquareBattle
         protected override void OnUpdate()
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
+            BufferFromEntity<ChannelEntry> lookupEntry = GetBufferFromEntity<ChannelEntry>();
 
-            var frameCount = UnityEngine.Time.frameCount;
-
-            Entities.ForEach((Entity e, ref ActionLoop action, in InputEvent input) =>
-            {
-                if (HasComponent<RequestAction>(input.owner))
-                    Player.RequestPlaySet(cmd, input.owner, e, action.action, 1, action.actionLayer);
-                else
-                    Player.RequestPlayAdd(cmd, input.owner, e, action.action, 1, action.actionLayer);
+            Entities.ForEach((Entity e, ref ActionDirect action, in InputEvent input, in ChannelData channel) =>
+            {        
+                int ch = (int)channel.channel;
+                var buffer = lookupEntry[input.owner];
+                buffer.RemoveAt(ch);
+                buffer.Insert(ch, new ChannelEntry()
+                {
+                    action = action.action,
+                    channel = channel.channel,
+                    source = e
+                });
 
             }).Run();
 
