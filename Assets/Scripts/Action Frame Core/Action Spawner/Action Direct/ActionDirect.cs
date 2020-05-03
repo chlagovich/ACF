@@ -5,6 +5,5 @@ namespace SquareBattle
 {
     public struct ActionDirect : IComponentData
     {
-        public Entity action;
     }
 }
