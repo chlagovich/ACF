@@ -368,8 +368,6 @@ GameObject:
   - component: {fileID: 9097143340690461942}
   - component: {fileID: 8829576229818289604}
   - component: {fileID: -1611560970563935261}
-  - component: {fileID: 7512447394300899300}
-  - component: {fileID: 1017666827889639551}
   - component: {fileID: 2985903456056419687}
   m_Layer: 0
   m_Name: Player
@@ -476,34 +474,6 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
---- !u!114 &7512447394300899300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9097143340690461939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 653ad43c39d6dc540b54e85323c358ea, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  channels: 0000000001000000020000000300000004000000
---- !u!114 &1017666827889639551
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9097143340690461939}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 64350f155a8d1eb44a89351ef49a66fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input: {fileID: 990670463523717377, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
-  channel: 1
-  action: {fileID: 1792482403169214809, guid: 36ec4e46592495f4a954b3f920064001, type: 3}
 --- !u!114 &2985903456056419687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -516,24 +486,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32002f61ced4dc14f934275738e2bcb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  channel: 2
   resetChainAfter: 0
-  inputTriggerDuration: 5
-  playerActions:
-  - continious: 0
-    input: {fileID: -3443275142228256790, guid: 377c0e0cd531304468ec3cd278c7eac7,
+  inputTriggerDuration: 0
+  abilities:
+  - input: {fileID: -3443275142228256790, guid: 377c0e0cd531304468ec3cd278c7eac7,
       type: 3}
+    channel: 2
     inputPriority: 0
-    type: 0
-    actions: []
-  - continious: 0
-    input: {fileID: 2719758824318151702, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
-    inputPriority: 1
-    type: 0
-    actions: []
-  - continious: 0
-    input: {fileID: -1397336695490689407, guid: 377c0e0cd531304468ec3cd278c7eac7,
-      type: 3}
-    inputPriority: 2
-    type: 0
-    actions: []
+    type: 3
+    actions:
+    - {fileID: 1792482403169214809, guid: 25181b0f49c0fc741a9420f17355666a, type: 3}

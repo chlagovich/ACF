@@ -7,68 +7,84 @@ using System;
 namespace SquareBattle
 {
 
-    public enum ActionType
+    public enum AbilityType
     {
-        Chain, Charge
+        Chain, Charge, Direct, Simple
     }
 
     [Serializable]
     public struct PlayerAbility
     {
-        public bool continious;
         public InputActionReference input;
+        public Channel channel;
         public int inputPriority;
-        public ActionType type;
+        public AbilityType type;
         public GameObject[] actions;
     }
 
     public class PlayerAbilityAuthoring : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
     {
-        public ActionChannel channel;
+
         public int resetChainAfter;
         public int inputTriggerDuration;
-        public PlayerAbility[] playerActions;
+        public PlayerAbility[] abilities;
 
         public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
         {
-            for (int i = 0; i < playerActions.Length; i++)
+            for (int i = 0; i < abilities.Length; i++)
             {
                 var e = dstManager.CreateEntity();
-#if UNITY_EDITOR
-                dstManager.SetName(e, dstManager.GetName(entity) + " " + playerActions[i].input.action.name + " Input Event");
-#endif
-                //dstManager.AddComponentData(e, new ActionChain()
-                //{
-                //    afterFrame = resetChainAfter,
-                //    beforeFrame = queueActionBefore,
-                //    index = 0
-                //});
 
-                dstManager.AddComponentData(e, new ChannelData() { channel = channel });
+                #if UNITY_EDITOR
+                var name = dstManager.GetName(entity) + " " + abilities[i].input.action.name + " Input Event";
+                dstManager.SetName(e, name);
+                #endif
+
+                switch (abilities[i].type)
+                {
+                    case AbilityType.Simple:
+                        dstManager.AddComponent(e, typeof(ActionSimple));
+                        break;
+                    case AbilityType.Direct:
+                        dstManager.AddComponent(e, typeof(ActionDirect));
+                        break;
+                    case AbilityType.Chain:
+                        dstManager.AddComponent(e, typeof(ActionChain));
+                        break;
+                    case AbilityType.Charge:
+                        dstManager.AddComponent(e, typeof(ActionCharge));
+                        break;
+
+                }
+
+                dstManager.AddComponentData(e, new ChannelData() { channel = abilities[i].channel });
                 dstManager.AddComponentData(e, new InputEvent()
                 {
                     owner = entity,
-                    priority = playerActions[i].inputPriority,
-                    id = playerActions[i].input.action.id,
+                    priority = abilities[i].inputPriority,
+                    id = abilities[i].input.action.id,
                     inputResetDuration = inputTriggerDuration
                 });
 
-                //DynamicBuffer<ActionBufferData> acbuffer = dstManager.AddBuffer<ActionBufferData>(e);
-                //for (int j = 0; j < playerActions[i].actions.Length; j++)
-                //{
-                //    var action = playerActions[i].actions[j];
-                //    var b = new ActionBufferData() { action = conversionSystem.GetPrimaryEntity(action) };
-                //    acbuffer.Add(b);
-                //}
+                var actions = abilities[i].actions;
+                DynamicBuffer<ActionBufferData> acbuffer = dstManager.AddBuffer<ActionBufferData>(e);
+                for (int j = 0; j < actions.Length; j++)
+                {
+                    var b = new ActionBufferData()
+                    {
+                        action = conversionSystem.GetPrimaryEntity(actions[j])
+                    };
+                    acbuffer.Add(b);
+                }
             }
         }
 
         public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
         {
-            //for (int i = 0; i < playerActions.Length; i++)
-            //{
-            //    referencedPrefabs.AddRange(playerActions[i].actions);
-            //}
+            for (int i = 0; i < abilities.Length; i++)
+            {
+                referencedPrefabs.AddRange(abilities[i].actions);
+            }
         }
     }
 }
