@@ -22,27 +22,24 @@ namespace SquareBattle
             var frameCount = UnityEngine.Time.frameCount;
             Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input, in ChannelData channel) =>
             {
-                if (input.triggered)
+                bool exist = false;
+                if (buffer.Exists(input.owner))
                 {
-                    bool exist = false;
-                    if (buffer.Exists(input.owner))
-                    {
-                        var states = buffer[input.owner];
+                    var states = buffer[input.owner];
 
-                        for (int i = 0; i < states.Length; i++)
+                    for (int i = 0; i < states.Length; i++)
+                    {
+                        if (states[i].channel == channel.channel)
                         {
-                            if (states[i].channel == channel.channel)
-                            {
-                                exist = true;
-                                chain.prevAction = states[i].action;
-                                break;
-                            }
+                            exist = true;
+                            chain.prevAction = states[i].action;
+                            break;
                         }
                     }
+                }
 
-                    if (exist)
-                        return;
-
+                if (input.triggered && !exist)
+                {
                     if (chain.index >= actions.Length)
                         chain.index = 0;
 
@@ -51,7 +48,7 @@ namespace SquareBattle
                         var acData = GetComponent<ActionData>(chain.prevAction);
                         if (acData.inputEvent != e)
                             chain.index = 0;
-                            
+
                         var frame = GetComponent<FrameData>(chain.prevAction);
                         var duration = frameCount - chain.lastFrameNbr;
                         if (duration > (frame.totalFrames + chain.resetChainDuration))
