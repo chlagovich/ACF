@@ -497,3 +497,9 @@ MonoBehaviour:
     actions:
     - {fileID: 1792482403169214809, guid: 25181b0f49c0fc741a9420f17355666a, type: 3}
     - {fileID: 1792482403169214809, guid: 1735261e8ed32124cb33da6556cadfca, type: 3}
+  - input: {fileID: 2719758824318151702, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
+    channel: 2
+    inputPriority: 0
+    type: 3
+    actions:
+    - {fileID: 1792482403169214809, guid: 1735261e8ed32124cb33da6556cadfca, type: 3}

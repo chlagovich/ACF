@@ -21,7 +21,7 @@ namespace SquareBattle
 
             var buffer = GetBufferFromEntity<PlayingState>(true);
 
-            Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionSimple simple, in InputEvent input, in ChannelData channel) =>
+            Entities.WithAll<ActionSimple>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
             {
                 if (input.triggered)
                 {
@@ -32,8 +32,7 @@ namespace SquareBattle
                         
                         for (int i = 0; i < states.Length; i++)
                         {
-                            var data = GetComponent<ActionData>(states[i].action);
-                            if (Guid.Equals(data.id,simple.lastAction))
+                            if (states[i].channel == channel.channel)
                             {
                                 exist = true;
                                 break;
@@ -44,21 +43,17 @@ namespace SquareBattle
                     if (exist)
                         return;
                     
-                    var id = Guid.NewGuid();
-                    
-                    simple.lastAction = id;
                     var ac = cmd.Instantiate(actions[0].action);
                     cmd.AddComponent(ac, new PlayAction());
                     cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
                     cmd.AddComponent(ac, new ActionData()
                     {
                         owner = input.owner,
-                        inputEvent = ac,
-                        id = id
+                        inputEvent = e
                     });
                 }
 
-            }).WithoutBurst().Run();
+            }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }

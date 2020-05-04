@@ -25,19 +25,16 @@ namespace SquareBattle
                 if (input.triggered)
                 {
                     bool exist = false;
-                    int totalFrames = 0;
                     if (buffer.Exists(input.owner))
                     {
                         var states = buffer[input.owner];
 
                         for (int i = 0; i < states.Length; i++)
                         {
-                            var data = GetComponent<ActionData>(states[i].action);
-                            var frame = GetComponent<FrameData>(states[i].action);
-                            if (Guid.Equals(data.id, chain.lastAction))
+                            if (states[i].channel == channel.channel)
                             {
                                 exist = true;
-                                totalFrames = frame.totalFrames;
+                                chain.prevAction = states[i].action;
                                 break;
                             }
                         }
@@ -49,14 +46,18 @@ namespace SquareBattle
                     if (chain.index >= actions.Length)
                         chain.index = 0;
 
-                    var duration = frameCount - chain.lastFrameNbr;
-                    if (duration > (totalFrames + chain.resetChainDuration))
-                        chain.index = 0;
+                    if (chain.prevAction != Entity.Null)
+                    {
+                        var acData = GetComponent<ActionData>(chain.prevAction);
+                        if (acData.inputEvent != e)
+                            chain.index = 0;
+                            
+                        var frame = GetComponent<FrameData>(chain.prevAction);
+                        var duration = frameCount - chain.lastFrameNbr;
+                        if (duration > (frame.totalFrames + chain.resetChainDuration))
+                            chain.index = 0;
+                    }
 
-                    // TODO detect input change must be implemented in the owner last input pressed
-
-                    var id = Guid.NewGuid();
-                    chain.lastAction = id;
                     var ac = cmd.Instantiate(actions[chain.index].action);
                     chain.lastFrameNbr = frameCount;
                     cmd.AddComponent(ac, new PlayAction());
@@ -64,13 +65,12 @@ namespace SquareBattle
                     cmd.AddComponent(ac, new ActionData()
                     {
                         owner = input.owner,
-                        inputEvent = ac,
-                        id = id
+                        inputEvent = e
                     });
 
                     chain.index++;
                 }
-            }).WithoutBurst().Run();
+            }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }
