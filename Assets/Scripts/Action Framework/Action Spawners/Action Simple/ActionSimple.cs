@@ -5,6 +5,6 @@ namespace SquareBattle
 {
     public struct ActionSimple : IComponentData
     {
-        public Entity lastAction;
+        public Guid lastAction;
     }
 }

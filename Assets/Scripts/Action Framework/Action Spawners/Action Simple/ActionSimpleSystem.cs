@@ -1,4 +1,5 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Entities;
 using UnityEngine;
 
 namespace SquareBattle
@@ -31,9 +32,8 @@ namespace SquareBattle
                         
                         for (int i = 0; i < states.Length; i++)
                         {
-                            Debug.Log(states[i].action);
-                            Debug.Log(simple.lastAction);
-                            if (states[i].action == simple.lastAction)
+                            var data = GetComponent<ActionData>(states[i].action);
+                            if (Guid.Equals(data.id,simple.lastAction))
                             {
                                 exist = true;
                                 break;
@@ -43,14 +43,18 @@ namespace SquareBattle
 
                     if (exist)
                         return;
-
-                    simple.lastAction = cmd.Instantiate(actions[0].action);
-                    cmd.AddComponent(simple.lastAction, new PlayAction());
-                    cmd.AddComponent(simple.lastAction, new ChannelData() { channel = channel.channel });
-                    cmd.AddComponent(simple.lastAction, new ActionData()
+                    
+                    var id = Guid.NewGuid();
+                    
+                    simple.lastAction = id;
+                    var ac = cmd.Instantiate(actions[0].action);
+                    cmd.AddComponent(ac, new PlayAction());
+                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
+                    cmd.AddComponent(ac, new ActionData()
                     {
                         owner = input.owner,
-                        inputEvent = e
+                        inputEvent = ac,
+                        id = id
                     });
                 }
 

@@ -49,7 +49,10 @@ namespace SquareBattle
                         dstManager.AddComponent(e, typeof(ActionDirect));
                         break;
                     case AbilityType.Chain:
-                        dstManager.AddComponent(e, typeof(ActionChain));
+                        dstManager.AddComponentData(e, new ActionChain()
+                        {
+                            resetChainDuration = resetChainAfter
+                        });
                         break;
                     case AbilityType.Charge:
                         dstManager.AddComponent(e, typeof(ActionCharge));
