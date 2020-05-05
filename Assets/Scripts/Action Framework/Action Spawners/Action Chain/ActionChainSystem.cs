@@ -38,7 +38,13 @@ namespace SquareBattle
                     }
                 }
 
-                if (input.triggered && !exist)
+                bool trigger = false;
+                if (input.continuous)
+                    trigger = input.value > 0;
+                else
+                    trigger = input.triggered;
+
+                if (trigger && !exist)
                 {
                     if (chain.index >= actions.Length)
                         chain.index = 0;

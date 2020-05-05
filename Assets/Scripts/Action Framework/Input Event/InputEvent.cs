@@ -10,6 +10,7 @@ namespace SquareBattle
         public Entity owner;
         public int priority;
         public Guid id;
+        public bool continuous;
         public float value;
         public bool triggered;
         public float2 axis;

@@ -16,6 +16,7 @@ namespace SquareBattle
     public struct PlayerAbility
     {
         public InputActionReference input;
+        public bool continuous;
         public Channel channel;
         public int inputPriority;
         public AbilityType type;
@@ -35,10 +36,10 @@ namespace SquareBattle
             {
                 var e = dstManager.CreateEntity();
 
-                #if UNITY_EDITOR
+#if UNITY_EDITOR
                 var name = dstManager.GetName(entity) + " " + abilities[i].input.action.name + " Input Event";
                 dstManager.SetName(e, name);
-                #endif
+#endif
 
                 switch (abilities[i].type)
                 {
@@ -66,7 +67,8 @@ namespace SquareBattle
                     owner = entity,
                     priority = abilities[i].inputPriority,
                     id = abilities[i].input.action.id,
-                    inputResetDuration = inputTriggerDuration
+                    inputResetDuration = inputTriggerDuration,
+                    continuous = abilities[i].continuous
                 });
 
                 var actions = abilities[i].actions;

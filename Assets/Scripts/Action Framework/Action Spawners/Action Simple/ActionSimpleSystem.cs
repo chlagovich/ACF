@@ -40,6 +40,7 @@ namespace SquareBattle
                         }
                     }
 
+                    // todo changed to repeated action
                     if (exist)
                         return;
                     
