@@ -8,7 +8,7 @@ namespace SquareBattle
     [UpdateInGroup(typeof(FrameDataGroupSimulation))]
     public class FramePlayerSystem : SystemBase
     {
-        private int currFrames;
+        public static int currentFrame;
         private int prevFrame;
 
         private int maxFrames;
@@ -17,9 +17,8 @@ namespace SquareBattle
 
         protected override void OnCreate()
         {
-            currFrames = 0;
+            currentFrame = 0;
             prevFrame = 0;
-            maxFrames = 1000;
 
             // Cache the BeginInitializationEntityCommandBufferSystem in a field, so we don't have to create it every frame
             CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
@@ -29,21 +28,15 @@ namespace SquareBattle
         {
             var cmd = CommandBuffer.CreateCommandBuffer().ToConcurrent();
 
-            if (currFrames > maxFrames)
-            {
-                currFrames = 0;
-                prevFrame = 0;
-            }
-
-            currFrames++;
-            int increment = currFrames - prevFrame;
+            currentFrame++;
+            int increment = currentFrame - prevFrame;
             prevFrame++;
 
             Entities.ForEach((ref PlayAction play, in FrameData frame) =>
             {
                 play.currentFrame += increment;
 
-                if (frame.loop)
+                if (play.loop)
                 {
                     if (play.currentFrame > frame.totalFrames)
                         play.currentFrame = 0;
@@ -55,7 +48,7 @@ namespace SquareBattle
 
             Entities.ForEach((Entity e, int entityInQueryIndex, in PlayAction play, in FrameData frame) =>
             {
-                if (!frame.loop && play.currentFrame >= frame.totalFrames)
+                if (!play.loop && play.currentFrame >= frame.totalFrames)
                 {
                     cmd.RemoveComponent<PlayAction>(entityInQueryIndex, e);
                 }

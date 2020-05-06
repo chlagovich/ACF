@@ -7,6 +7,5 @@ using Unity.Mathematics;
 [GenerateAuthoringComponent]
 public struct FrameData : IComponentData
 {
-    public bool loop;
     public int totalFrames;
 }

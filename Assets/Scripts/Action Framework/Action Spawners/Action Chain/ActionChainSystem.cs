@@ -19,7 +19,7 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
 
             var buffer = GetBufferFromEntity<PlayingState>(true);
-            var frameCount = UnityEngine.Time.frameCount;
+            var frameCount = FramePlayerSystem.currentFrame;
             Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input, in ChannelData channel) =>
             {
                 bool exist = false;

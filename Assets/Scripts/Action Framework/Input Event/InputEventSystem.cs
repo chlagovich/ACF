@@ -16,14 +16,13 @@ namespace SquareBattle
             var finalgroup = new NativeList<Entity>(Allocator.TempJob);
             NativeList<Entity> activeInputs = new NativeList<Entity>(Allocator.TempJob);
 
-            var frameCount = UnityEngine.Time.frameCount;
             Entities.ForEach((Entity entity, ref InputEvent input, in ChannelData channel) =>
             {
                 input.value = 0;
                 input.axis = float2.zero;
                 if (input.inputResetDuration > 0)
                 {
-                    if (input.lastInputFrame <= frameCount)
+                    if (input.lastInputFrame <= FramePlayerSystem.currentFrame)
                         input.triggered = false;
                 }
                 else
@@ -32,7 +31,7 @@ namespace SquareBattle
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
                 if (action.triggered)
-                    input.lastInputFrame = frameCount + input.inputResetDuration;
+                    input.lastInputFrame = FramePlayerSystem.currentFrame + input.inputResetDuration;
 
                 object value = action.ReadValueAsObject();
                 if (value != null)
