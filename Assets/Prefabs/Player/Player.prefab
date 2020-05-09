@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 9097143340690461940}
   - component: {fileID: 9097143340690461943}
   - component: {fileID: 9097143340690461942}
-  - component: {fileID: 8829576229818289604}
+  - component: {fileID: -4506248802177445175}
   - component: {fileID: -1611560970563935261}
   - component: {fileID: 2985903456056419687}
   m_Layer: 0
@@ -416,7 +416,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ConversionMode: 1
---- !u!95 &8829576229818289604
+--- !u!95 &-4506248802177445175
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 0
@@ -494,14 +494,20 @@ MonoBehaviour:
     continuous: 0
     channel: 2
     inputPriority: 0
-    type: 0
+    type: 3
     actions:
     - {fileID: 1792482403169214809, guid: 25181b0f49c0fc741a9420f17355666a, type: 3}
-    - {fileID: 1792482403169214809, guid: 1735261e8ed32124cb33da6556cadfca, type: 3}
   - input: {fileID: 2719758824318151702, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
     continuous: 0
-    channel: 2
+    channel: 3
     inputPriority: 0
     type: 3
     actions:
     - {fileID: 1792482403169214809, guid: 1735261e8ed32124cb33da6556cadfca, type: 3}
+  - input: {fileID: 990670463523717377, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
+    continuous: 0
+    channel: 1
+    inputPriority: 0
+    type: 2
+    actions:
+    - {fileID: 1792482403169214809, guid: 36ec4e46592495f4a954b3f920064001, type: 3}

@@ -45,7 +45,7 @@ namespace SquareBattle
                         return;
                     
                     var ac = cmd.Instantiate(actions[0].action);
-                    cmd.AddComponent(ac, new PlayAction());
+                    cmd.AddComponent(ac, new OnPlayUpdate());
                     cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
                     cmd.AddComponent(ac, new ActionData()
                     {

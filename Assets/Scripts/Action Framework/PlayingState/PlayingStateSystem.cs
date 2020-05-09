@@ -24,7 +24,7 @@ namespace SquareBattle
 
             var buffer = GetBufferFromEntity<PlayingState>();
 
-            Entities.ForEach((Entity entity, in PlayAction play, in ActionData action, in ChannelData channel) =>
+            Entities.ForEach((Entity entity, in OnPlayUpdate play, in ActionData action, in ChannelData channel) =>
             {          
                 DynamicBuffer<PlayingState> states;
                 if (buffer.Exists(action.owner))

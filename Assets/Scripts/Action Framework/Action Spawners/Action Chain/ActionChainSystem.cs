@@ -63,7 +63,7 @@ namespace SquareBattle
 
                     var ac = cmd.Instantiate(actions[chain.index].action);
                     chain.lastFrameNbr = frameCount;
-                    cmd.AddComponent(ac, new PlayAction());
+                    cmd.AddComponent(ac, new OnPlayUpdate());
                     cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
                     cmd.AddComponent(ac, new ActionData()
                     {

@@ -31,7 +31,7 @@
                 },
                 {
                     "name": "Smash Hit",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "1bb8ca48-6c0c-4935-b5c9-23e95f73e536",
                     "expectedControlType": "Button",
                     "processors": "",

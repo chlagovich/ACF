@@ -32,25 +32,35 @@ namespace SquareBattle
             int increment = currentFrame - prevFrame;
             prevFrame++;
 
-            Entities.ForEach((ref PlayAction play, in FrameData frame) =>
+            Entities.WithNone<OnPause, OnStop>().ForEach((ref OnPlayUpdate play, in FrameData frame) =>
+             {
+                 play.currentFrame += increment;
+
+                 //play.normlizedTime
+                 // set normalized time
+                 if (play.loop)
+                 {
+                     if (play.currentFrame > frame.totalFrames)
+                         play.currentFrame = 0;
+                 }
+
+                 play.currentFrame = math.clamp(play.currentFrame, 0, frame.totalFrames);
+
+             }).ScheduleParallel();
+
+            Entities.WithAll<OnStop>().ForEach((Entity e, ref OnPlayUpdate play) =>
             {
-                play.currentFrame += increment;
-
-                if (play.loop)
-                {
-                    if (play.currentFrame > frame.totalFrames)
-                        play.currentFrame = 0;
-                }
-
-                play.currentFrame = math.clamp(play.currentFrame, 0, frame.totalFrames);
+                play.currentFrame = 0;
+                play.normlizedTime = 0;
 
             }).ScheduleParallel();
 
-            Entities.ForEach((Entity e, int entityInQueryIndex, in PlayAction play, in FrameData frame) =>
+            Entities.ForEach((Entity e, int entityInQueryIndex, in OnPlayUpdate play, in FrameData frame) =>
             {
                 if (!play.loop && play.currentFrame >= frame.totalFrames)
                 {
-                    cmd.RemoveComponent<PlayAction>(entityInQueryIndex, e);
+                    cmd.RemoveComponent<OnPlayUpdate>(entityInQueryIndex, e);
+                    cmd.AddComponent<OnStop>(entityInQueryIndex, e);
                 }
 
             }).ScheduleParallel();
