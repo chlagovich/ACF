@@ -1,4 +1,5 @@
 ﻿using Unity.Entities;
+using UnityEngine;
 
 namespace SquareBattle
 {
@@ -17,26 +18,49 @@ namespace SquareBattle
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
-            Entities.WithAll<ActionCharge>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
+            var buffer = GetBufferFromEntity<PlayingState>(true);
+            var frameCount = FramePlayerSystem.currentFrame;
+            Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionCharge charge, in InputEvent input, in ChannelData channel) =>
             {
-                //if (chain.index >= actions.Length)
-                //    chain.index = 0;
-                //
-                //var playing = lookupMixer[input.owner];
-                //var nbrf = playing[(int)channel.channel].lastNbrFrames;
-                //var duration = frameCount - nbrf;
-                //
-                //if (prevActionData.inputEvent != e)
-                //    chain.index = 0;
-                //
-                //if (duration > (prevFrameData.totalFrames + chain.afterFrame))
-                //    chain.index = 0;
-                //
-                //{
-                //    var currActionData = GetComponent<ActionData>(playing.currAction);
-                //    if (currActionData.inputEvent != e)
-                //        chain.index = 0;
-                //}
+                bool exist = false;
+                if (buffer.Exists(input.owner))
+                {
+                    var states = buffer[input.owner];
+
+                    for (int i = 0; i < states.Length; i++)
+                    {
+                        if (states[i].channel == channel.channel)
+                        {
+                            exist = true;
+                            charge.prevAction = states[i].action;
+                            break;
+                        }
+                    }
+                }
+
+                if (input.value > 0)
+                {
+                    if (exist)
+                        return;
+
+                    charge.lastFrameNbr = frameCount + charge.minChargeDuration;
+                    var ac = cmd.Instantiate(actions[0].action);
+                    cmd.AddComponent(ac, new OnPlayUpdate());
+                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
+                    cmd.AddComponent(ac, new ActionData()
+                    {
+                        owner = input.owner,
+                        inputEvent = e
+                    });
+                }
+                else
+                {
+                    if(frameCount > charge.lastFrameNbr)
+                    {
+
+                    }
+                }
+
             }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
