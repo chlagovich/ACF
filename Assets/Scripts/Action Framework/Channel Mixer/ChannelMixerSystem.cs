@@ -17,16 +17,14 @@ namespace SquareBattle
         protected override void OnUpdate()
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
-            var frameCount = UnityEngine.Time.frameCount;
 
-           Entities.ForEach((Entity e , DynamicBuffer<PlayingState> states)=>
+            Entities.ForEach((Entity e, DynamicBuffer<PlayingState> states) =>
             {
-  
                 if (GetPlayingStateIndexByChannel(Channel.Debug, ref states))
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.Debug)
+                        if ((int)states[j].channel < (int)Channel.Debug && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
 
@@ -37,7 +35,7 @@ namespace SquareBattle
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.AbilityOverride)
+                        if ((int)states[j].channel < (int)Channel.AbilityOverride && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
                     return;
@@ -47,7 +45,7 @@ namespace SquareBattle
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.Ability)
+                        if ((int)states[j].channel < (int)Channel.Ability && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
                     return;
@@ -55,8 +53,10 @@ namespace SquareBattle
 
                 for (int j = 0; j < states.Length; j++)
                 {
-                    cmd.RemoveComponent<OnStop>(states[j].action);
+                    if (!HasComponent<OnStop>(states[j].action))
+                        cmd.RemoveComponent<OnStop>(states[j].action);
                 }
+
             }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);

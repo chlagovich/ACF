@@ -11,7 +11,7 @@ namespace SquareBattle
     {
         protected override void OnUpdate()
         {
-            Entities.ForEach((Entity e, in OnPlayUpdate play, in ActionData actionData, in FrameData frameData, in AnimationData animation) =>
+            Entities.WithNone<OnPause,OnStop>().ForEach((Entity e, in OnPlayUpdate play, in ActionData actionData, in FrameData frameData, in AnimationData animation) =>
             {
                 var animator = EntityManager.GetComponentObject<Animator>(actionData.owner);
 

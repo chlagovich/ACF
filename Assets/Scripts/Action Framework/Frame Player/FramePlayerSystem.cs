@@ -46,12 +46,12 @@ namespace SquareBattle
 
              }).ScheduleParallel();
 
-            Entities.WithAll<OnStop>().ForEach((Entity e, int entityInQueryIndex, ref OnPlayUpdate play) =>
+            Entities.ForEach((Entity e, int entityInQueryIndex, ref OnPlayUpdate play, ref OnStop stop) =>
             {
                 play.currentFrame = 0;
                 play.normlizedTime = 0;
                 if (!play.loop)
-                    cmd.DestroyEntity(entityInQueryIndex, e);
+                    stop.destroy = true;
 
             }).ScheduleParallel();
 
@@ -59,9 +59,15 @@ namespace SquareBattle
             {
                 if (!play.loop && play.currentFrame >= frame.totalFrames)
                 {
-                    cmd.RemoveComponent<OnPlayUpdate>(entityInQueryIndex, e);
-                    cmd.AddComponent<OnStop>(entityInQueryIndex, e);
+                    cmd.AddComponent(entityInQueryIndex, e, new OnStop() { destroy = true });
                 }
+
+            }).ScheduleParallel();
+
+            Entities.ForEach((Entity e, int entityInQueryIndex, OnStop stop) =>
+            {
+                if (stop.destroy)
+                    cmd.DestroyEntity(entityInQueryIndex, e);
 
             }).ScheduleParallel();
 
