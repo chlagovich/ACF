@@ -20,16 +20,8 @@ namespace SquareBattle
 
             Entities.ForEach((Entity e, DynamicBuffer<PlayingState> states) =>
             {
-                if (GetPlayingStateIndexByChannel(Channel.debug, ref states))
-                {
-                    for (int j = 0; j < states.Length; j++)
-                    {
-                        if ((int)states[j].channel < (int)Channel.debug && !HasComponent<OnStop>(states[j].action))
-                            cmd.AddComponent(states[j].action, new OnStop());
-                    }
-
-                    return;
-                }
+                // TODO figure out a way to stop action as they play,
+                // currently they play 2 frames and then get destroyed
 
                 if (GetPlayingStateIndexByChannel(Channel.hit, ref states))
                 {
@@ -59,8 +51,6 @@ namespace SquareBattle
 
             }).Run();
 
-            // TODO figure out a way to stop action as they play,
-            // currently they play 2 frames and then get destroyed
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }
 
