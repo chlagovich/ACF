@@ -59,6 +59,8 @@ namespace SquareBattle
 
             }).Run();
 
+            // TODO figure out a way to stop action as they play,
+            // currently they play 2 frames and then get destroyed
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }
 
