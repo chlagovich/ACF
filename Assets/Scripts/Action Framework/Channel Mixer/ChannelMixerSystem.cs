@@ -53,7 +53,7 @@ namespace SquareBattle
 
                 for (int j = 0; j < states.Length; j++)
                 {
-                    if (!HasComponent<OnStop>(states[j].action))
+                    if (HasComponent<OnStop>(states[j].action))
                         cmd.RemoveComponent<OnStop>(states[j].action);
                 }
 
