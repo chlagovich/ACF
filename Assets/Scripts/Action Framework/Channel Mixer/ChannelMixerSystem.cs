@@ -20,32 +20,32 @@ namespace SquareBattle
 
             Entities.ForEach((Entity e, DynamicBuffer<PlayingState> states) =>
             {
-                if (GetPlayingStateIndexByChannel(Channel.Debug, ref states))
+                if (GetPlayingStateIndexByChannel(Channel.debug, ref states))
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.Debug && !HasComponent<OnStop>(states[j].action))
+                        if ((int)states[j].channel < (int)Channel.debug && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
 
                     return;
                 }
 
-                if (GetPlayingStateIndexByChannel(Channel.AbilityOverride, ref states))
+                if (GetPlayingStateIndexByChannel(Channel.hit, ref states))
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.AbilityOverride && !HasComponent<OnStop>(states[j].action))
+                        if ((int)states[j].channel < (int)Channel.hit && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
                     return;
                 }
 
-                if (GetPlayingStateIndexByChannel(Channel.Ability, ref states))
+                if (GetPlayingStateIndexByChannel(Channel.ability, ref states))
                 {
                     for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)states[j].channel < (int)Channel.Ability && !HasComponent<OnStop>(states[j].action))
+                        if ((int)states[j].channel < (int)Channel.ability && !HasComponent<OnStop>(states[j].action))
                             cmd.AddComponent(states[j].action, new OnStop());
                     }
                     return;

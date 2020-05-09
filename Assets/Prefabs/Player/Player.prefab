@@ -493,14 +493,14 @@ MonoBehaviour:
       type: 3}
     continuous: 0
     channel: 2
-    channelType: 1
+    channelType: 0
     inputPriority: 0
     type: 3
     actions:
     - {fileID: 1792482403169214809, guid: 25181b0f49c0fc741a9420f17355666a, type: 3}
   - input: {fileID: 2719758824318151702, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
     continuous: 0
-    channel: 0
+    channel: 2
     channelType: 0
     inputPriority: 0
     type: 3
