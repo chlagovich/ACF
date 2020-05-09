@@ -46,7 +46,7 @@ namespace SquareBattle
                     charge.lastFrameNbr = frameCount + charge.minChargeDuration;
                     var ac = cmd.Instantiate(actions[0].action);
                     cmd.AddComponent(ac, new OnPlayUpdate());
-                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
+                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel, type = channel.type });
                     cmd.AddComponent(ac, new ActionData()
                     {
                         owner = input.owner,

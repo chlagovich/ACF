@@ -47,7 +47,8 @@ namespace SquareBattle
                     states.Add(new PlayingState()
                     {
                         action = entity,
-                        channel = channel.channel
+                        channel = channel.channel,
+                        channelType = channel.type
                     });
                 }
             }).Run();

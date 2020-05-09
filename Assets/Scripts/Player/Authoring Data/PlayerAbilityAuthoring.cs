@@ -18,6 +18,7 @@ namespace SquareBattle
         public InputActionReference input;
         public bool continuous;
         public Channel channel;
+        public ChannelType channelType;
         public int inputPriority;
         public AbilityType type;
         public GameObject[] actions;
@@ -61,7 +62,12 @@ namespace SquareBattle
 
                 }
 
-                dstManager.AddComponentData(e, new ChannelData() { channel = abilities[i].channel });
+                dstManager.AddComponentData(e, new ChannelData()
+                {
+                    channel = abilities[i].channel,
+                    type = abilities[i].channelType
+                });
+                
                 dstManager.AddComponentData(e, new InputEvent()
                 {
                     owner = entity,

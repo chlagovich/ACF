@@ -29,7 +29,7 @@ namespace SquareBattle
                     if (buffer.Exists(input.owner))
                     {
                         var states = buffer[input.owner];
-                        
+
                         for (int i = 0; i < states.Length; i++)
                         {
                             if (states[i].channel == channel.channel)
@@ -43,10 +43,10 @@ namespace SquareBattle
                     // todo changed to repeated action
                     if (exist)
                         return;
-                    
+
                     var ac = cmd.Instantiate(actions[0].action);
                     cmd.AddComponent(ac, new OnPlayUpdate());
-                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel });
+                    cmd.AddComponent(ac, new ChannelData() { channel = channel.channel, type = channel.type });
                     cmd.AddComponent(ac, new ActionData()
                     {
                         owner = input.owner,
