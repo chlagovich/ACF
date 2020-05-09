@@ -9,12 +9,9 @@ namespace SquareBattle
     public class ChannelMixerSystem : SystemBase
     {
         EndSimulationEntityCommandBufferSystem CommandBuffer;
-        //EntityQuery playing;
         protected override void OnCreate()
         {
-            // Cache the BeginInitializationEntityCommandBufferSystem in a field, so we don't have to create it every frame
             CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
-            //playing = GetEntityQuery(typeof(PlayingState));
         }
 
         protected override void OnUpdate()
@@ -22,66 +19,45 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
             var frameCount = UnityEngine.Time.frameCount;
 
-            //int length = playing.CalculateEntityCount();
-
-            //var p = playing.ToEntityArray(Allocator.TempJob);
-            //var buffer = GetBufferFromEntity<PlayingState>();
-            //Entities.ForEach((Entity e, in PlayAction action) =>
-            //{
-            //    EntityManager.SetEnabled(e, false);
-//
-            //}).WithoutBurst().Run();
-            /*for (int i = 0; i < p.Length; i++)
+           Entities.ForEach((Entity e , DynamicBuffer<PlayingState> states)=>
             {
-                var b = buffer[p[i]];
-                if (GetPlayingStateIndexByChannel(Channel.Debug, ref b))
+  
+                if (GetPlayingStateIndexByChannel(Channel.Debug, ref states))
                 {
-                    for (int j = 0; j < b.Length; i++)
+                    for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)b[j].channel < (int)Channel.Debug)
-                            EntityManager.SetEnabled(b[j].action, false);
-                        else
-                            EntityManager.SetEnabled(b[j].action, true);
+                        if ((int)states[j].channel < (int)Channel.Debug)
+                            cmd.AddComponent(states[j].action, new OnStop());
                     }
-                    p.Dispose();
+
                     return;
                 }
 
-                if (GetPlayingStateIndexByChannel(Channel.AbilityOverride, ref b))
+                if (GetPlayingStateIndexByChannel(Channel.AbilityOverride, ref states))
                 {
-                    for (int j = 0; j < b.Length; j++)
+                    for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)b[j].channel < (int)Channel.AbilityOverride)
-                            EntityManager.SetEnabled(b[j].action, false);
-                        else
-                            EntityManager.SetEnabled(b[j].action, true);
+                        if ((int)states[j].channel < (int)Channel.AbilityOverride)
+                            cmd.AddComponent(states[j].action, new OnStop());
                     }
-
-                    p.Dispose();
                     return;
                 }
 
-                if (GetPlayingStateIndexByChannel(Channel.Ability, ref b))
+                if (GetPlayingStateIndexByChannel(Channel.Ability, ref states))
                 {
-                    for (int j = 0; j < b.Length; j++)
+                    for (int j = 0; j < states.Length; j++)
                     {
-                        if ((int)b[j].channel < (int)Channel.Ability)
-                            EntityManager.SetEnabled(b[j].action, false);
-                        else
-                            EntityManager.SetEnabled(b[j].action, true);
+                        if ((int)states[j].channel < (int)Channel.Ability)
+                            cmd.AddComponent(states[j].action, new OnStop());
                     }
-
-                    p.Dispose();
                     return;
                 }
 
-                for (int j = 0; j < b.Length; j++)
+                for (int j = 0; j < states.Length; j++)
                 {
-                    EntityManager.SetEnabled(b[j].action, true);
+                    cmd.RemoveComponent<OnStop>(states[j].action);
                 }
-            }*/
-
-            // p.Dispose();
+            }).Run();
 
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }

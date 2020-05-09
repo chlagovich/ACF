@@ -35,9 +35,6 @@ namespace SquareBattle
             Entities.WithNone<OnPause, OnStop>().ForEach((ref OnPlayUpdate play, in FrameData frame) =>
              {
                  play.currentFrame += increment;
-
-                 //play.normlizedTime
-                 // set normalized time
                  if (play.loop)
                  {
                      if (play.currentFrame > frame.totalFrames)
@@ -45,13 +42,16 @@ namespace SquareBattle
                  }
 
                  play.currentFrame = math.clamp(play.currentFrame, 0, frame.totalFrames);
+                 play.normlizedTime = play.currentFrame / frame.totalFrames;
 
              }).ScheduleParallel();
 
-            Entities.WithAll<OnStop>().ForEach((Entity e, ref OnPlayUpdate play) =>
+            Entities.WithAll<OnStop>().ForEach((Entity e, int entityInQueryIndex, ref OnPlayUpdate play) =>
             {
                 play.currentFrame = 0;
                 play.normlizedTime = 0;
+                if (!play.loop)
+                    cmd.DestroyEntity(entityInQueryIndex, e);
 
             }).ScheduleParallel();
 

@@ -2,5 +2,4 @@
 
 public struct OnStop : IComponentData
 {
-    public bool destroy;
 }

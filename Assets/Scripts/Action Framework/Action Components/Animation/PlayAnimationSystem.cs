@@ -6,6 +6,7 @@ using UnityEngine;
 namespace SquareBattle
 {
     [UpdateInGroup(typeof(FrameDataGroupSimulation))]
+    [UpdateAfter(typeof(ChannelMixerSystem))]
     public class PlayAnimationSystem : SystemBase
     {
         protected override void OnUpdate()
