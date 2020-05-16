@@ -369,6 +369,7 @@ GameObject:
   - component: {fileID: -4506248802177445175}
   - component: {fileID: -1611560970563935261}
   - component: {fileID: 2985903456056419687}
+  - component: {fileID: -7507087054213798915}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -492,7 +493,7 @@ MonoBehaviour:
   - input: {fileID: -3443275142228256790, guid: 377c0e0cd531304468ec3cd278c7eac7,
       type: 3}
     continuous: 0
-    channel: 2
+    channel: 3
     channelType: 0
     inputPriority: 0
     type: 3
@@ -500,17 +501,29 @@ MonoBehaviour:
     - {fileID: 1792482403169214809, guid: 25181b0f49c0fc741a9420f17355666a, type: 3}
   - input: {fileID: 2719758824318151702, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
     continuous: 0
-    channel: 2
+    channel: 3
     channelType: 0
-    inputPriority: 0
+    inputPriority: 1
     type: 3
     actions:
     - {fileID: 1792482403169214809, guid: 1735261e8ed32124cb33da6556cadfca, type: 3}
   - input: {fileID: 990670463523717377, guid: 377c0e0cd531304468ec3cd278c7eac7, type: 3}
     continuous: 0
-    channel: 1
+    channel: 2
     channelType: 1
     inputPriority: 0
     type: 2
     actions:
     - {fileID: 1792482403169214809, guid: 36ec4e46592495f4a954b3f920064001, type: 3}
+--- !u!114 &-7507087054213798915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9097143340690461939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f1b798a00d0484fbe7a72931fd8788, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

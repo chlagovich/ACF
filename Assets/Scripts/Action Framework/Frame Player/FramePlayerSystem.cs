@@ -48,16 +48,14 @@ namespace SquareBattle
 
             }).ScheduleParallel();
 
-            Entities.ForEach((Entity e, int entityInQueryIndex, ref OnPlayUpdate play, ref OnStop stop) =>
+            Entities.WithAll<OnStop>().ForEach((Entity e, ref OnPlayUpdate play) =>
             {
                 play.currentFrame = 0;
                 play.normlizedTime = 0;
-                if (!play.loop)
-                    stop.destroy = true;
 
             }).ScheduleParallel();
 
-            Entities.ForEach((Entity e, int entityInQueryIndex, in OnPlayUpdate play, in FrameData frame) =>
+            Entities.WithNone<OnStop>().ForEach((Entity e, int entityInQueryIndex, in OnPlayUpdate play, in FrameData frame) =>
             {
                 if (!play.loop && play.currentFrame >= frame.totalFrames)
                 {

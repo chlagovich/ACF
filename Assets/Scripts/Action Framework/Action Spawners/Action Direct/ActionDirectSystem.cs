@@ -18,6 +18,7 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
 
             var buffer = GetBufferFromEntity<PlayingState>(true);
+            var channels = GetBufferFromEntity<ChannelsBuffer>(true);
 
             Entities.WithAll<ActionDirect>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
             {
@@ -36,7 +37,22 @@ namespace SquareBattle
                     }
                 }
 
-                if (exist)
+                bool isBlocked = false;
+                if (channels.Exists(input.owner))
+                {
+                    var ch = channels[input.owner];
+
+                    for (int i = 0; i < ch.Length; i++)
+                    {
+                        if (ch[i].channel == channel.channel && ch[i].blocked)
+                        {
+                            isBlocked = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (exist || isBlocked)
                     return;
 
                 var ac = cmd.Instantiate(actions[0].action);

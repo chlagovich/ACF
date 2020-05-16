@@ -19,6 +19,7 @@ namespace SquareBattle
             var cmd = CommandBuffer.CreateCommandBuffer();
 
             var buffer = GetBufferFromEntity<PlayingState>(true);
+            var channels = GetBufferFromEntity<ChannelsBuffer>(true);
             var frameCount = FramePlayerSystem.currentFrame;
             Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input, in ChannelData channel) =>
             {
@@ -38,19 +39,35 @@ namespace SquareBattle
                     }
                 }
 
+                bool isBlocked = false;
+                if (channels.Exists(input.owner))
+                {
+                    var ch = channels[input.owner];
+
+                    for (int i = 0; i < ch.Length; i++)
+                    {
+                        if (ch[i].channel == channel.channel && ch[i].blocked)
+                        {
+                            isBlocked = true;
+                            break;
+                        }
+                    }
+                }
+
                 bool trigger = false;
                 if (input.continuous)
                     trigger = input.value > 0;
                 else
                     trigger = input.triggered;
 
-                if (trigger && !exist)
+                if (trigger && !exist && !isBlocked)
                 {
                     if (chain.index >= actions.Length)
                         chain.index = 0;
 
                     if (chain.prevAction != Entity.Null)
                     {
+                        // todo : you need to implement new way to store previous action
                         var acData = GetComponent<ActionData>(chain.prevAction);
                         if (acData.inputEvent != e)
                             chain.index = 0;

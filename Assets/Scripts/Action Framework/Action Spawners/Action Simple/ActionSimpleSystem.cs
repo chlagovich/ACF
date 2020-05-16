@@ -19,16 +19,16 @@ namespace SquareBattle
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
-            var buffer = GetBufferFromEntity<PlayingState>(true);
-
+            var playing = GetBufferFromEntity<PlayingState>(true);
+            var channels = GetBufferFromEntity<ChannelsBuffer>(true);
             Entities.WithAll<ActionSimple>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
             {
                 if (input.triggered)
                 {
                     bool exist = false;
-                    if (buffer.Exists(input.owner))
+                    if (playing.Exists(input.owner))
                     {
-                        var states = buffer[input.owner];
+                        var states = playing[input.owner];
 
                         for (int i = 0; i < states.Length; i++)
                         {
@@ -40,8 +40,23 @@ namespace SquareBattle
                         }
                     }
 
+                    bool isBlocked = false;
+                    if (channels.Exists(input.owner))
+                    {
+                        var ch = channels[input.owner];
+
+                        for (int i = 0; i < ch.Length; i++)
+                        {
+                            if (ch[i].channel == channel.channel && ch[i].blocked)
+                            {
+                                isBlocked = true;
+                                break;
+                            }
+                        }
+                    }
+
                     // todo changed to repeated action
-                    if (exist)
+                    if (exist || isBlocked)
                         return;
 
                     var ac = cmd.Instantiate(actions[0].action);

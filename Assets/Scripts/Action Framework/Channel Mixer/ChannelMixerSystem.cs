@@ -18,35 +18,35 @@ namespace SquareBattle
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
+            Channel topChanel = Channel.None;
+
             Entities.ForEach((Entity e, DynamicBuffer<PlayingState> states) =>
             {
-                // TODO figure out a way to stop action as they play,
-                // currently they play 2 frames and then get destroyed
-
-                if (GetPlayingStateIndexByChannel(Channel.hit, ref states))
+                var topIndex = GetTopOverridePlayingChannelIndex(states);
+                if (topIndex != -1)
+                    topChanel = states[topIndex].channel;
+                for (int i = 0; i < states.Length; i++)
                 {
-                    for (int j = 0; j < states.Length; j++)
+                    if ((int)states[i].channel < (int)topChanel)
                     {
-                        if ((int)states[j].channel < (int)Channel.hit && !HasComponent<OnStop>(states[j].action))
-                            cmd.AddComponent(states[j].action, new OnStop());
+                        if (!HasComponent<OnStop>(states[i].action))
+                            cmd.AddComponent(states[i].action, new OnStop() { destroy = true });
                     }
-                    return;
                 }
 
-                if (GetPlayingStateIndexByChannel(Channel.ability, ref states))
-                {
-                    for (int j = 0; j < states.Length; j++)
-                    {
-                        if ((int)states[j].channel < (int)Channel.ability && !HasComponent<OnStop>(states[j].action))
-                            cmd.AddComponent(states[j].action, new OnStop());
-                    }
-                    return;
-                }
+            }).Run();
 
-                for (int j = 0; j < states.Length; j++)
+            Entities.ForEach((Entity e, DynamicBuffer<ChannelsBuffer> channels) =>
+            {
+                for (int i = 0; i < channels.Length; i++)
                 {
-                    if (HasComponent<OnStop>(states[j].action))
-                        cmd.RemoveComponent<OnStop>(states[j].action);
+                    var c = channels[i];
+                    if ((int)channels[i].channel < (int)topChanel)
+                        c.blocked = true;
+                    else
+                        c.blocked = false;
+
+                    channels[i] = c;
                 }
 
             }).Run();
@@ -54,15 +54,20 @@ namespace SquareBattle
             CommandBuffer.AddJobHandleForProducer(Dependency);
         }
 
-
-        public static bool GetPlayingStateIndexByChannel(Channel channel, ref DynamicBuffer<PlayingState> states)
+        public static int GetTopOverridePlayingChannelIndex(DynamicBuffer<PlayingState> states)
         {
+            int topChannel = 1;
+            int index = -1;
             for (int i = 0; i < states.Length; i++)
             {
-                if (states[i].channel == channel)
-                    return true;
+                if ((int)states[i].channel > topChannel && states[i].channelType == ChannelType.Override)
+                {
+                    topChannel = (int)states[i].channel;
+                    index = i;
+                }
             }
-            return false;
+
+            return index;
         }
     }
 }
