@@ -26,7 +26,7 @@ namespace SquareBattle
                 if (input.triggered)
                 {
                     bool exist = false;
-                    if (playing.Exists(input.owner))
+                    if (playing.HasComponent(input.owner))
                     {
                         var states = playing[input.owner];
 
@@ -41,7 +41,7 @@ namespace SquareBattle
                     }
 
                     bool isBlocked = false;
-                    if (channels.Exists(input.owner))
+                    if (channels.HasComponent(input.owner))
                     {
                         var ch = channels[input.owner];
 

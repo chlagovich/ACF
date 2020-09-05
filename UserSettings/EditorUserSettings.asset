@@ -8,6 +8,9 @@ EditorUserSettings:
     Advanced Settings:
       value: 183b144645154b6805011b0314355e1e15121c1d233a2a343e6b4773e4e1382be78d2b
       flags: 0
+    RecentlyUsedScenePath-0:
+      value: 22424703114646680e0b02275f105c151812563f22213229
+      flags: 0
     lightmappingDeviceAndPlatform:
       value: 53
       flags: 0
@@ -24,5 +27,7 @@ EditorUserSettings:
   m_SemanticMergeMode: 2
   m_VCShowFailedCheckout: 1
   m_VCOverwriteFailedCheckoutAssets: 1
-  m_VCOverlayIcons: 1
+  m_VCProjectOverlayIcons: 1
+  m_VCHierarchyOverlayIcons: 1
+  m_VCOtherOverlayIcons: 1
   m_VCAllowAsyncUpdate: 0

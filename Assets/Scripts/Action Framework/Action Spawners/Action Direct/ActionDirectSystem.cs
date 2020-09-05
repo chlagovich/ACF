@@ -23,7 +23,7 @@ namespace SquareBattle
             Entities.WithAll<ActionDirect>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
             {
                 bool exist = false;
-                if (buffer.Exists(input.owner))
+                if (buffer.HasComponent(input.owner))
                 {
                     var states = buffer[input.owner];
 
@@ -38,7 +38,7 @@ namespace SquareBattle
                 }
 
                 bool isBlocked = false;
-                if (channels.Exists(input.owner))
+                if (channels.HasComponent(input.owner))
                 {
                     var ch = channels[input.owner];
 

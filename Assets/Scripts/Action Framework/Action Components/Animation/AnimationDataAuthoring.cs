@@ -7,7 +7,7 @@ using UnityEngine;
 [Serializable]
 public struct AnimationData : IComponentData 
 {
-    public NativeString32 name;
+    public FixedString32 name;
 }
 
 public class AnimationDataAuthoring : MonoBehaviour, IConvertGameObjectToEntity

@@ -26,7 +26,7 @@ namespace SquareBattle
 
         protected override void OnUpdate()
         {
-            var cmd = CommandBuffer.CreateCommandBuffer().ToConcurrent();
+            var cmd = CommandBuffer.CreateCommandBuffer().AsParallelWriter();
 
             currentFrame++;
             int increment = currentFrame - prevFrame;

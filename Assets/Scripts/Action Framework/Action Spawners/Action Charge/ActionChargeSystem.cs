@@ -23,7 +23,7 @@ namespace SquareBattle
             Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionCharge charge, in InputEvent input, in ChannelData channel) =>
             {
                 bool exist = false;
-                if (buffer.Exists(input.owner))
+                if (buffer.HasComponent(input.owner))
                 {
                     var states = buffer[input.owner];
 
