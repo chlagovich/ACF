@@ -6,6 +6,6 @@ public class FrameDataGroupSimulation : ComponentSystemGroup
     protected override void OnCreate()
     {
         base.OnCreate();
-        World.GetExistingSystem<FixedStepSimulationSystemGroup>().Timestep =  0.033333f;
+        World.GetExistingSystem<FixedStepSimulationSystemGroup>().FixedRateManager.Timestep =  0.033333f;
     }
 }

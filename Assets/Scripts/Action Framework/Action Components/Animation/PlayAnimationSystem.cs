@@ -11,13 +11,13 @@ namespace SquareBattle
     {
         protected override void OnUpdate()
         {
-            Entities.WithNone<OnPause,OnStop>().ForEach((Entity e, in OnPlayUpdate play, in ActionData actionData, in FrameData frameData, in AnimationData animation) =>
-            {
-                var animator = EntityManager.GetComponentObject<Animator>(actionData.owner);
+            Entities.WithNone<OnPause, OnStop>().ForEach((Entity e, in OnPlayUpdate play, in ActionData actionData, in FrameData frameData, in AnimationData animation) =>
+             {
+                 var animator = EntityManager.GetComponentObject<Animator>(actionData.owner);
 
-                animator.Play(animation.name.ToString(), 0, (1f / frameData.totalFrames) * play.currentFrame);
+                 animator.Play(animation.name.ToString(), 0, play.normlizedTime);
 
-            }).WithoutBurst().Run();
+             }).WithoutBurst().Run();
         }
     }
 }

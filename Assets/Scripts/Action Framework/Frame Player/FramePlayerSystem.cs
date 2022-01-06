@@ -44,7 +44,7 @@ namespace SquareBattle
                 play.currentFrame = math.clamp(play.currentFrame, 0, frame.totalFrames);
 
                 // todo fix normalized time 
-                play.normlizedTime = play.currentFrame / frame.totalFrames;
+                play.normlizedTime = math.unlerp(0, frame.totalFrames, play.currentFrame);
 
             }).ScheduleParallel();
 
