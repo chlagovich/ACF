@@ -1,4 +1,4 @@
-# Action Framework
+# Action Combo Framework
 ## Overview
 
 Action Framework leverages the power of Unity's Entity Component System (ECS) to deliver a frame-accurate action system designed specifically for fighting games.
