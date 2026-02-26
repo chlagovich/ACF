@@ -4,13 +4,13 @@ using Unity.Entities;
 namespace SquareBattle
 {
     [UpdateAfter(typeof(PlayingStateSystem))]
-    public class ActionHistorySystem : SystemBase
+    public partial class ActionHistorySystem : SystemBase
     {
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
         {
-            CommandBuffer = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<BeginSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()

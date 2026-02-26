@@ -5,26 +5,28 @@ namespace SquareBattle
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     [UpdateAfter(typeof(InputEventSystem))]
-    public class ActionChainSystem : SystemBase
+    public partial class ActionChainSystem : SystemBase
     {
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
         {
-            CommandBuffer = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<BeginSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
-            var buffer = GetBufferFromEntity<PlayingState>(true);
-            var channels = GetBufferFromEntity<ChannelsBuffer>(true);
+            var buffer = GetBufferLookup<PlayingState>(true);
+            var channels = GetBufferLookup<ChannelsBuffer>(true);
+            var actionDataLookup = GetComponentLookup<ActionData>(true);
+            var frameDataLookup = GetComponentLookup<FrameData>(true);
             var frameCount = FramePlayerSystem.currentFrame;
             Entities.ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, ref ActionChain chain, in InputEvent input, in ChannelData channel) =>
             {
                 bool exist = false;
-                if (buffer.HasComponent(input.owner))
+                if (buffer.HasBuffer(input.owner))
                 {
                     var states = buffer[input.owner];
 
@@ -40,7 +42,7 @@ namespace SquareBattle
                 }
 
                 bool isBlocked = false;
-                if (channels.HasComponent(input.owner))
+                if (channels.HasBuffer(input.owner))
                 {
                     var ch = channels[input.owner];
 
@@ -68,11 +70,11 @@ namespace SquareBattle
                     if (chain.prevAction != Entity.Null)
                     {
                         // todo : you need to implement new way to store previous action
-                        var acData = GetComponent<ActionData>(chain.prevAction);
+                        var acData = actionDataLookup[chain.prevAction];
                         if (acData.inputEvent != e)
                             chain.index = 0;
 
-                        var frame = GetComponent<FrameData>(chain.prevAction);
+                        var frame = frameDataLookup[chain.prevAction];
                         var duration = frameCount - chain.lastFrameNbr;
                         if (duration > (frame.totalFrames + chain.resetChainDuration))
                             chain.index = 0;

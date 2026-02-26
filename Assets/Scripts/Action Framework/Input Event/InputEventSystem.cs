@@ -8,7 +8,7 @@ using Unity.Mathematics;
 namespace SquareBattle
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
-    public class InputEventSystem : SystemBase
+    public partial class InputEventSystem : SystemBase
     {
         protected override void OnUpdate()
         {
@@ -44,7 +44,7 @@ namespace SquareBattle
                 var ownergroup = new NativeList<Entity>(Allocator.TempJob);
                 for (int i = 0; i < activeInputs.Length; i++)
                 {
-                    var input = GetComponent<InputEvent>(activeInputs[i]);
+                    var input = SystemAPI.GetComponent<InputEvent>(activeInputs[i]);
                     if (!ownergroup.Contains(input.owner))
                         ownergroup.Add(input.owner);
                 }
@@ -56,7 +56,7 @@ namespace SquareBattle
 
                     for (int j = 0; j < activeInputs.Length; j++)
                     {
-                        var input = GetComponent<InputEvent>(activeInputs[j]);
+                        var input = SystemAPI.GetComponent<InputEvent>(activeInputs[j]);
                         if (ownergroup[i] == input.owner)
                             group.Add(activeInputs[j]);
 
@@ -65,7 +65,7 @@ namespace SquareBattle
                     var channels = new NativeList<int>(Allocator.TempJob);
                     for (int k = 0; k < group.Length; k++)
                     {
-                        var channel = GetComponent<ChannelData>(group[k]);
+                        var channel = SystemAPI.GetComponent<ChannelData>(group[k]);
                         if (!channels.Contains((int)channel.channel))
                             channels.Add((int)channel.channel);
                     }
@@ -75,7 +75,7 @@ namespace SquareBattle
                         var chgroup = new NativeList<Entity>(Allocator.TempJob);
                         for (int s = 0; s < group.Length; s++)
                         {
-                            var channel = GetComponent<ChannelData>(group[s]);
+                            var channel = SystemAPI.GetComponent<ChannelData>(group[s]);
                             if (channels[l] == (int)channel.channel)
                                 chgroup.Add(group[s]);
                         }
@@ -83,8 +83,8 @@ namespace SquareBattle
                         int index = 0;
                         for (int t = 0; t < chgroup.Length; t++)
                         {
-                            var tt = GetComponent<InputEvent>(chgroup[t]);
-                            var tti = GetComponent<InputEvent>(chgroup[index]);
+                            var tt = SystemAPI.GetComponent<InputEvent>(chgroup[t]);
+                            var tti = SystemAPI.GetComponent<InputEvent>(chgroup[index]);
                             if (tt.priority > tti.priority)
                                 index = t;
                         }
@@ -104,7 +104,7 @@ namespace SquareBattle
 
             for (int i = 0; i < finalgroup.Length; i++)
             {
-                var input = GetComponent<InputEvent>(finalgroup[i]);
+                var input = SystemAPI.GetComponent<InputEvent>(finalgroup[i]);
                 var p = EntityManager.GetComponentObject<PlayerInput>(input.owner);
                 var action = p.actions.FindAction(input.id);
                 if (action.triggered)
@@ -119,7 +119,7 @@ namespace SquareBattle
                     else if (t.Equals(typeof(float)))
                         input.value = (float)value;
                 }
-                SetComponent(finalgroup[i], input);
+                SystemAPI.SetComponent(finalgroup[i], input);
             }
 
             finalgroup.Dispose();

@@ -6,27 +6,27 @@ namespace SquareBattle
 {
     [UpdateInGroup(typeof(InitializationSystemGroup))]
     [UpdateAfter(typeof(InputEventSystem))]
-    public class ActionSimpleSystem : SystemBase
+    public partial class ActionSimpleSystem : SystemBase
     {
         BeginSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
         {
-            CommandBuffer = World.GetOrCreateSystem<BeginSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<BeginSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
 
-            var playing = GetBufferFromEntity<PlayingState>(true);
-            var channels = GetBufferFromEntity<ChannelsBuffer>(true);
+            var playing = GetBufferLookup<PlayingState>(true);
+            var channels = GetBufferLookup<ChannelsBuffer>(true);
             Entities.WithAll<ActionSimple>().ForEach((Entity e, DynamicBuffer<ActionBufferData> actions, in InputEvent input, in ChannelData channel) =>
             {
                 if (input.triggered)
                 {
                     bool exist = false;
-                    if (playing.HasComponent(input.owner))
+                    if (playing.HasBuffer(input.owner))
                     {
                         var states = playing[input.owner];
 
@@ -41,7 +41,7 @@ namespace SquareBattle
                     }
 
                     bool isBlocked = false;
-                    if (channels.HasComponent(input.owner))
+                    if (channels.HasBuffer(input.owner))
                     {
                         var ch = channels[input.owner];
 

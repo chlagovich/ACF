@@ -2,21 +2,25 @@
 using Unity.Entities;
 using UnityEngine;
 
-
-public class ChannelAuthor : MonoBehaviour, IConvertGameObjectToEntity
+public class ChannelAuthor : MonoBehaviour
 {
-    public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+    private class Baker : Unity.Entities.Baker<ChannelAuthor>
     {
-        DynamicBuffer<ChannelsBuffer> acbuffer = dstManager.AddBuffer<ChannelsBuffer>(entity);
-        var names = Enum.GetNames(typeof(Channel));
-        for (int j = 1; j < names.Length; j++)
+        public override void Bake(ChannelAuthor authoring)
         {
-            var b = new ChannelsBuffer()
+            var entity = GetEntity(TransformUsageFlags.Dynamic);
+            DynamicBuffer<ChannelsBuffer> acbuffer = AddBuffer<ChannelsBuffer>(entity);
+
+            var names = Enum.GetNames(typeof(Channel));
+            for (int j = 1; j < names.Length; j++)
             {
-                channel = (Channel)Enum.Parse(typeof(Channel), names[j]),
-                blocked = false
-            };
-            acbuffer.Add(b);
+                var b = new ChannelsBuffer()
+                {
+                    channel = (Channel)Enum.Parse(typeof(Channel), names[j]),
+                    blocked = false
+                };
+                acbuffer.Add(b);
+            }
         }
     }
 }

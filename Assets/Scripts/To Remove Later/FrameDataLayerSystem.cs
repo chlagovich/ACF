@@ -16,7 +16,7 @@ namespace SquareBattle
     //
     //    protected override void OnCreate()
     //    {
-    //        CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+    //        CommandBuffer = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
     //        NonPlayingQuery = GetEntityQuery(ComponentType.ReadOnly(typeof(FrameData)),
     //            ComponentType.ReadOnly(typeof(TargetEntiyData)),
     //            ComponentType.ReadOnly(typeof(QueueFrame)),

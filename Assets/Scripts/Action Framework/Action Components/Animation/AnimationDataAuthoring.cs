@@ -7,14 +7,19 @@ using UnityEngine;
 [Serializable]
 public struct AnimationData : IComponentData 
 {
-    public FixedString32 name;
+    public FixedString32Bytes name;
 }
 
-public class AnimationDataAuthoring : MonoBehaviour, IConvertGameObjectToEntity
+public class AnimationDataAuthoring : MonoBehaviour
 {
     public string animationName;
-    public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+
+    private class Baker : Unity.Entities.Baker<AnimationDataAuthoring>
     {
-        dstManager.AddComponentData(entity, new AnimationData() { name = animationName });
+        public override void Bake(AnimationDataAuthoring authoring)
+        {
+            var entity = GetEntity(TransformUsageFlags.None);
+            AddComponent(entity, new AnimationData() { name = authoring.animationName });
+        }
     }
 }

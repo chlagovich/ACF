@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using Unity.Entities;
-using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using System;
 
@@ -24,77 +23,92 @@ namespace SquareBattle
         public GameObject[] actions;
     }
 
-    public class PlayerAbilityAuthoring : MonoBehaviour, IConvertGameObjectToEntity, IDeclareReferencedPrefabs
+    public class PlayerAbilityAuthoring : MonoBehaviour
     {
 
         public int resetChainAfter;
         public int inputTriggerDuration;
         public PlayerAbility[] abilities;
 
-        public void Convert(Entity entity, EntityManager dstManager, GameObjectConversionSystem conversionSystem)
+        private class Baker : Unity.Entities.Baker<PlayerAbilityAuthoring>
         {
-            for (int i = 0; i < abilities.Length; i++)
+            public override void Bake(PlayerAbilityAuthoring authoring)
             {
-                var e = dstManager.CreateEntity();
+                var owner = GetEntity(TransformUsageFlags.Dynamic);
 
-#if UNITY_EDITOR
-                var name = dstManager.GetName(entity) + " " + abilities[i].input.action.name + " Input Event";
-                dstManager.SetName(e, name);
-#endif
-
-                switch (abilities[i].type)
+                var playerInput = authoring.GetComponent<PlayerInput>();
+                if (playerInput != null)
                 {
-                    case AbilityType.Simple:
-                        dstManager.AddComponent(e, typeof(ActionSimple));
-                        break;
-                    case AbilityType.Direct:
-                        dstManager.AddComponent(e, typeof(ActionDirect));
-                        break;
-                    case AbilityType.Chain:
-                        dstManager.AddComponentData(e, new ActionChain()
-                        {
-                            resetChainDuration = resetChainAfter
-                        });
-                        break;
-                    case AbilityType.Charge:
-                        dstManager.AddComponent(e, typeof(ActionCharge));
-                        break;
-
+                    AddComponentObject(owner, playerInput);
                 }
 
-                dstManager.AddComponentData(e, new ChannelData()
+                var animator = authoring.GetComponent<Animator>();
+                if (animator != null)
                 {
-                    channel = abilities[i].channel,
-                    type = abilities[i].channelType
-                });
-                
-                dstManager.AddComponentData(e, new InputEvent()
-                {
-                    owner = entity,
-                    priority = abilities[i].inputPriority,
-                    id = abilities[i].input.action.id,
-                    inputResetDuration = inputTriggerDuration,
-                    continuous = abilities[i].continuous
-                });
+                    AddComponentObject(owner, animator);
+                }
 
-                var actions = abilities[i].actions;
-                DynamicBuffer<ActionBufferData> acbuffer = dstManager.AddBuffer<ActionBufferData>(e);
-                for (int j = 0; j < actions.Length; j++)
+                if (authoring.abilities == null)
+                    return;
+
+                for (int i = 0; i < authoring.abilities.Length; i++)
                 {
-                    var b = new ActionBufferData()
+                    var ability = authoring.abilities[i];
+                    if (ability.input == null || ability.input.action == null)
+                        continue;
+
+                    var entityName = $"{authoring.name} {ability.input.action.name} Input Event";
+                    var e = CreateAdditionalEntity(TransformUsageFlags.None, false, entityName);
+
+                    switch (ability.type)
                     {
-                        action = conversionSystem.GetPrimaryEntity(actions[j])
-                    };
-                    acbuffer.Add(b);
-                }
-            }
-        }
+                        case AbilityType.Simple:
+                            AddComponent<ActionSimple>(e);
+                            break;
+                        case AbilityType.Direct:
+                            AddComponent<ActionDirect>(e);
+                            break;
+                        case AbilityType.Chain:
+                            AddComponent(e, new ActionChain()
+                            {
+                                resetChainDuration = authoring.resetChainAfter
+                            });
+                            break;
+                        case AbilityType.Charge:
+                            AddComponent<ActionCharge>(e);
+                            break;
+                    }
 
-        public void DeclareReferencedPrefabs(List<GameObject> referencedPrefabs)
-        {
-            for (int i = 0; i < abilities.Length; i++)
-            {
-                referencedPrefabs.AddRange(abilities[i].actions);
+                    AddComponent(e, new ChannelData()
+                    {
+                        channel = ability.channel,
+                        type = ability.channelType
+                    });
+
+                    AddComponent(e, new InputEvent()
+                    {
+                        owner = owner,
+                        priority = ability.inputPriority,
+                        id = ability.input.action.id,
+                        inputResetDuration = authoring.inputTriggerDuration,
+                        continuous = ability.continuous
+                    });
+
+                    DynamicBuffer<ActionBufferData> acbuffer = AddBuffer<ActionBufferData>(e);
+                    if (ability.actions == null)
+                        continue;
+
+                    for (int j = 0; j < ability.actions.Length; j++)
+                    {
+                        if (ability.actions[j] == null)
+                            continue;
+
+                        acbuffer.Add(new ActionBufferData()
+                        {
+                            action = GetEntity(ability.actions[j], TransformUsageFlags.None)
+                        });
+                    }
+                }
             }
         }
     }

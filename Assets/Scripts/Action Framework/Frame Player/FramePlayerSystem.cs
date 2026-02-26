@@ -6,7 +6,7 @@ using UnityEngine;
 namespace SquareBattle
 {
     [UpdateInGroup(typeof(FrameDataGroupSimulation))]
-    public class FramePlayerSystem : SystemBase
+    public partial class FramePlayerSystem : SystemBase
     {
         public static int currentFrame;
         private int prevFrame;
@@ -21,7 +21,7 @@ namespace SquareBattle
             prevFrame = 0;
 
             // Cache the BeginInitializationEntityCommandBufferSystem in a field, so we don't have to create it every frame
-            CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
@@ -64,7 +64,7 @@ namespace SquareBattle
 
             }).ScheduleParallel();
 
-            Entities.ForEach((Entity e, int entityInQueryIndex, OnStop stop) =>
+            Entities.ForEach((Entity e, int entityInQueryIndex, in OnStop stop) =>
             {
                 if (stop.destroy)
                     cmd.DestroyEntity(entityInQueryIndex, e);

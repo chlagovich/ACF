@@ -4,13 +4,13 @@ using Unity.Entities;
 namespace SquareBattle
 {
     [UpdateInGroup(typeof(FrameDataGroupSimulation))]
-    public class PlayingStateSystem : SystemBase
+    public partial class PlayingStateSystem : SystemBase
     {
         EndSimulationEntityCommandBufferSystem CommandBuffer;
 
         protected override void OnCreate()
         {
-            CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
@@ -22,12 +22,12 @@ namespace SquareBattle
                 state.Clear();
             }).Run();
 
-            var buffer = GetBufferFromEntity<PlayingState>();
+            var buffer = GetBufferLookup<PlayingState>();
 
             Entities.ForEach((Entity entity, in OnPlayUpdate play, in ActionData action, in ChannelData channel) =>
             {          
                 DynamicBuffer<PlayingState> states;
-                if (buffer.HasComponent(action.owner))
+                if (buffer.HasBuffer(action.owner))
                     states = buffer[action.owner];
                 else
                     states = cmd.AddBuffer<PlayingState>(action.owner);

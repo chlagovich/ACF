@@ -6,17 +6,18 @@ namespace SquareBattle
 {
     [UpdateInGroup(typeof(FrameDataGroupSimulation))]
     [UpdateAfter(typeof(PlayingStateSystem))]
-    public class ChannelMixerSystem : SystemBase
+    public partial class ChannelMixerSystem : SystemBase
     {
         EndSimulationEntityCommandBufferSystem CommandBuffer;
         protected override void OnCreate()
         {
-            CommandBuffer = World.GetOrCreateSystem<EndSimulationEntityCommandBufferSystem>();
+            CommandBuffer = World.GetOrCreateSystemManaged<EndSimulationEntityCommandBufferSystem>();
         }
 
         protected override void OnUpdate()
         {
             var cmd = CommandBuffer.CreateCommandBuffer();
+            var onStopLookup = GetComponentLookup<OnStop>(true);
 
             Channel topChanel = Channel.None;
 
@@ -29,7 +30,7 @@ namespace SquareBattle
                 {
                     if ((int)states[i].channel < (int)topChanel)
                     {
-                        if (!HasComponent<OnStop>(states[i].action))
+                        if (!onStopLookup.HasComponent(states[i].action))
                             cmd.AddComponent(states[i].action, new OnStop() { destroy = true });
                     }
                 }
